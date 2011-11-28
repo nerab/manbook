@@ -21,6 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{The manbook command can be used to produce an eBook from one or more man pages.}
   gem.email = "nerab@gmx.net"
   gem.authors = ["Nicholas E. Rabenau"]
+  gem.executables << 'manbook'
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

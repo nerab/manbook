@@ -1,3 +1,95 @@
-#!/bin/env ruby
+#!/usr/bin/env ruby
 
-# groff -mandoc `man -w dscl` -T html > man.html
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+
+require 'rubygems'
+
+help = <<HELP
+The manbook command can be used to produce an eBook from one or more man pages.
+
+Author: Nicolas E. Rabenau nerab@gmx.at
+Homepage: http://rubydoc.info/gems/manbook/file/README.md
+
+Basic Usage:
+
+        manbook <MANPAGE>
+        manbook <MANPAGE1> [<MANPAGE2> ...]
+        manbook <MANPAGE> --output <FILE>
+        manbook <MANPAGE1> [<MANPAGE2> ...] --output <DIRECTORY>
+        manbook --all <FILE> --output <DIRECTORY>
+
+Options:
+HELP
+
+def usage
+  "Run '#{File.basename(__FILE__)} --help' for further help."
+end
+
+require 'optparse'
+require 'manbook'
+
+output_dir = '.'
+
+opts = OptionParser.new do |opts|
+  opts.banner = help
+
+  opts.on("--verbose", "Verbose mode - displays additional diagnostic information") do |file|
+    ManBook.logger = Logger.new(STDERR)
+    ManBook.logger.formatter = ManBook::LogFormatter.new
+    ManBook.logger.level = Logger::INFO
+  end
+
+  opts.on("--trace", "Trace (debug) mode - displays debug information and stack traces") do |file|
+    ManBook.logger = Logger.new(STDERR)
+    ManBook.logger.formatter = ManBook::LogFormatter.new
+    ManBook.logger.level = Logger::DEBUG
+  end
+
+  opts.on("--version", "Display current version") do
+    puts "#{File.basename(__FILE__)} " + ManBook::VERSION
+    exit 0
+  end
+
+  opts.on("--all", "Create a book with all man pages") do |dir|
+    ManBook.logger.info "Creating a book with all man pages"
+    raise "Not yet implemented"
+  end
+
+  opts.on("--output DIR", "Use DIR as output directory") do |dir|
+    ManBook.logger.info "Using '#{dir}' as output directory"
+    output_dir = dir
+  end
+end
+
+opts.parse!
+
+def html_name(man_page_file)
+  "#{File.basename(man_page_file).split(/([\w-]*)\./)[1]}.html"
+end
+
+def convert_to_html(man_page, html_file_name)
+  man_page_file = %x[man -w #{man_page}]
+  
+  if 0 != $?
+    raise ManPageNotFoundError.new(man_page)
+  end
+  
+  if man_page_file =~ /\.gz$/
+    puts "gunzip -c #{man_page_file} | groff -mandoc -T html > #{html_file_name}"
+  else
+    puts "groff -mandoc #{man_page_file} -T html > #{html_file_name}"
+  end
+end
+
+begin
+  ARGV.each{|man_page|
+    html_file = File.join(output_dir, html_name(man_page))
+    ManBook.logger.debug("Writing HTML page for #{man_page} to #{html_file}")
+    convert_to_html(man_page, html_file)
+  }
+rescue
+  ManBook.logger.error $!.message
+  ManBook.logger.error $!.backtrace.join("\n")
+  ManBook.logger.info usage
+  exit(1)
+end
