@@ -58,22 +58,33 @@ begin
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
-    @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_FILE == File.basename(f)}.collect{|html_file|
-      ManBook::Parser.parse(html_file)
-    }.sort{|l,r| l[:title] <=> r[:title]}
-    
-    File.open(File.join(src_dir, INDEX_FILE), 'w') {|f|
-      f.write(render('index.html.erb'){
-        @pages.collect{|page|
-          begin
-            render('_page.html.erb', binding)
-          rescue
-            ManBook.logger.error $!.message
-            ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
-          end
-        }.join
-      })
-    }
+  # find pages
+  @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_FILE == File.basename(f)}.collect{|html_file|
+    ManBook::Parser.parse(html_file)
+  }.sort{|l,r| l[:title] <=> r[:title]}
+  
+  # build index.html
+  File.open(File.join(src_dir, INDEX_FILE), 'w') {|f|
+    f.write(render('index.html.erb'){
+      @pages.collect{|page|
+        begin
+          render('_page.html.erb', binding)
+        rescue
+          ManBook.logger.error $!.message
+          ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
+        end
+      }.join
+    })
+  }
+
+  # TODO build opf file
+
+  # TODO build ncx file
+
+  # TODO copy CSS file to target location
+
+  # TODO print message how to call kindlegen
+  
 rescue
   ManBook.logger.error $!.message
   ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"

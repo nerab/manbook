@@ -1,2 +1,3 @@
+* With OPF and NCX files, we may not need the index.html at all (it's just a TOC, anyway)
 * Evaluate whether we need paging for the index page
 * Do not overwrite existing files unless --force was given

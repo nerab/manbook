@@ -1,0 +1,11 @@
+/* from http://www.perun.net/2011/09/05/mit-html-editor-dokumente-und-e-books-fuer-amazon-kindle-erstellen-2/ */
+h1 {font-size: 1.5em; margin-bottom: 1em;}
+h2 {font-size: 1.375em; margin: 1.25em 0 0.25em 0;}
+h3 {font-size: 1.25em; margin: 1.25em 0 0.25em 0;}
+h4 {font-size: 1.125em; margin: 1.25em 0 0.25em 0;}
+h5 {font-size: 1em; font-weight: bold; margin: 1.25em 0 0.25em 0;}
+h6 {font-size: 1.375em; font-weight: bold; margin: 1.25em 0 0.25em 0;}
+table {margin-top: 0.75em;}
+p {margin: .125em 0 .5em 0; text-indent: 0;}
+ul, ol, blockquote, pre, dl, hr {margin-top: .125em; margin-bottom: .5em;}
+.inhaltsverzeichnis ul {list-style: none; padding-left: 0; margin-left: 20px;}
