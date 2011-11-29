@@ -1,3 +1,2 @@
 * Create a about / welcome page that explains how this book came together
-* Make the titles etc. configurable
 * Do not overwrite existing files unless --force was given

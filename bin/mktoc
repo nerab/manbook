@@ -26,6 +26,9 @@ require 'optparse'
 require 'manbook'
 require 'erb'
 
+# defaults
+@book_title = "ManBook - a book of selected man pages"
+
 opts = OptionParser.new do |opts|
   opts.banner = help
 
@@ -44,6 +47,11 @@ opts = OptionParser.new do |opts|
   opts.on("--version", "Display current version") do
     puts "#{File.basename(__FILE__)} " + ManBook::VERSION
     exit 0
+  end
+
+  opts.on("--title TITLE", "Use TITLE as book title") do |title|
+    ManBook.logger.info "Setting book title to '#{title}'"
+    @book_title = title
   end
 end
 

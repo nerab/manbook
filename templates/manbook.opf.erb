@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
-    <dc:title>ManBook</dc:title>
+    <dc:title><%= @book_title %></dc:title>
     <dc:language>en</dc:language>
-    <dc:identifier id="uid">ManBook</dc:identifier>
+    <dc:identifier id="uid"><%= @book_title %></dc:identifier>
     <dc:creator opf:role="aut">Multiple Authors</dc:creator>
     <dc:generator><%= GENERATOR %><dc:generator>
   </metadata>
