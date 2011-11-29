@@ -9,6 +9,8 @@ require 'open4'
 
 require 'manbook/formatter'
 require 'manbook/html_formatter'
+require 'manbook/indexer'
+
 require 'manbook/errors'
 require 'manbook/log_formatter'
 
