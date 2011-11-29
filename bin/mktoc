@@ -5,7 +5,8 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'rubygems'
 
 help = <<HELP
-Creates a table of contents (TOC) file for all HTML files in a directory.
+Creates table of contents (TOC) files for all HTML files in a directory. This 
+tool was built to prepare HTML pages for the Kindle.
 
 Author: Nicolas E. Rabenau nerab@gmx.at
 Homepage: http://rubydoc.info/gems/manbook/file/README.md
@@ -53,18 +54,23 @@ end
 begin
   opts.parse!
   
-  INDEX_FILE = 'index.html'
+  INDEX_HTML = 'index.html'
+  INDEX_OPF = 'index.opf'
+  INDEX_NCX = 'index.ncx'
+  OUTPUT_FILE = 'manbook.mobi'
+
+  GENERATOR = "#{File.basename(__FILE__)} " + ManBook::VERSION
   
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
   # find pages
-  @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_FILE == File.basename(f)}.collect{|html_file|
+  @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_HTML == File.basename(f)}.collect{|html_file|
     ManBook::Parser.parse(html_file)
   }.sort{|l,r| l[:title] <=> r[:title]}
   
   # build index.html
-  File.open(File.join(src_dir, INDEX_FILE), 'w') {|f|
+  File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
     f.write(render('index.html.erb'){
       @pages.collect{|page|
         begin
@@ -77,14 +83,23 @@ begin
     })
   }
 
-  # TODO build opf file
+  # build opf file
+  File.open(File.join(src_dir, INDEX_OPF), 'w') {|f|
+    f.write(render('manbook.opf.erb'))
+  }
 
-  # TODO build ncx file
+  # build ncx file
+  File.open(File.join(src_dir, INDEX_NCX), 'w') {|f|
+    f.write(render('manbook.ncx.erb'))
+  }
 
-  # TODO copy CSS file to target location
-
-  # TODO print message how to call kindlegen
-  
+  # print message how to call kindlegen
+  ManBook.logger.info "Successfully finished building the book in #{src_dir}"
+  ManBook.logger.info 'Call the following command in order to convert your book into the Kindle format:'
+  ManBook.logger.info
+  ManBook.logger.info "  kindlegen #{File.join(src_dir, INDEX_OPF)} -o #{OUTPUT_FILE}"
+  ManBook.logger.info
+  ManBook.logger.info "After that, the book will appear as #{File.join(src_dir, OUTPUT_FILE)}"
 rescue
   ManBook.logger.error $!.message
   ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
