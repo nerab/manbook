@@ -56,20 +56,22 @@ begin
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
-  begin
-    @pages = ManBook::Indexer.index(src_dir) # .sort
+    @pages = Dir.glob(File.join(src_dir, "*.html")).collect{|html_file|
+      ManBook::Parser.parse(html_file)
+    }.sort{|l,r| l[:title] <=> r[:title]}
     
     File.open(File.join(src_dir, 'index.html'), 'w') {|f|
       f.write(render('index.html.erb'){
         @pages.collect{|page|
-          render('_page.html.erb', binding)
+          begin
+            render('_page.html.erb', binding)
+          rescue
+            ManBook.logger.error $!.message
+            ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
+          end
         }.join
       })
     }
-  rescue ManBook::ManPageNotFoundError => e
-    ManBook.logger.error e.message
-    ManBook.logger.debug "Backtrace:\n#{e.backtrace.join("\n")}"
-  end
 rescue
   ManBook.logger.error $!.message
   ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
