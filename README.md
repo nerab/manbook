@@ -5,9 +5,9 @@ manbook --  produces an eBook from man pages
 
     manbook <MANPAGE>
     manbook <MANPAGE1> [<MANPAGE2> ...]
-    manbook <MANPAGE> --output <FILE>
+    manbook <MANPAGE> --output <DIRECTORY>
     manbook <MANPAGE1> [<MANPAGE2> ...] --output <DIRECTORY>
-    manbook --all <FILE> --output <DIRECTORY>
+    manbook --all --output <DIRECTORY>
 
 ## DESCRIPTION
 

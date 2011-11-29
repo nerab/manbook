@@ -12,11 +12,11 @@ Homepage: http://rubydoc.info/gems/manbook/file/README.md
 
 Basic Usage:
 
-        manbook <MANPAGE>
-        manbook <MANPAGE1> [<MANPAGE2> ...]
-        manbook <MANPAGE> --output <FILE>
-        manbook <MANPAGE1> [<MANPAGE2> ...] --output <DIRECTORY>
-        manbook --all <FILE> --output <DIRECTORY>
+    manbook <MANPAGE>
+    manbook <MANPAGE1> [<MANPAGE2> ...]
+    manbook <MANPAGE> --output <DIRECTORY>
+    manbook <MANPAGE1> [<MANPAGE2> ...] --output <DIRECTORY>
+    manbook --all --output <DIRECTORY>
 
 Options:
 HELP
@@ -26,6 +26,7 @@ def usage
 end
 
 require 'optparse'
+require 'open3'
 require 'manbook'
 
 output_dir = '.'
@@ -58,38 +59,64 @@ opts = OptionParser.new do |opts|
   opts.on("--output DIR", "Use DIR as output directory") do |dir|
     ManBook.logger.info "Using '#{dir}' as output directory"
     output_dir = dir
+    Dir.mkdir(output_dir) unless File.exist?(output_dir)
   end
 end
 
-opts.parse!
-
 def html_name(man_page_file)
-  "#{File.basename(man_page_file).split(/([\w-]*)\./)[1]}.html"
+  "#{File.basename(man_page_file)}.html"
 end
 
 def convert_to_html(man_page, html_file_name)
-  man_page_file = %x[man -w #{man_page}]
-  
+  # locate the man file
+  man_page_file = %x[man -w #{man_page} 2>/dev/null].chomp
+
   if 0 != $?
-    raise ManPageNotFoundError.new(man_page)
+    raise ManBook::ManPageNotFoundError.new(man_page)
+  end
+
+  ManBook.logger.debug("Located man page at #{man_page_file}")
+  
+  # pipe through gunzip if gzipped
+  if man_page_file =~ /\.gz$/
+    cmd = "gunzip -c #{man_page_file} | groff -mandoc -T html > #{html_file_name}"
+  else
+    cmd = puts "groff -mandoc #{man_page_file} -T html > #{html_file_name}"
   end
   
-  if man_page_file =~ /\.gz$/
-    puts "gunzip -c #{man_page_file} | groff -mandoc -T html > #{html_file_name}"
+  ManBook.logger.debug("Executing #{cmd}")
+  
+  result = nil
+  Open3.popen3(cmd){|stdin, stdout, stderr|
+    result = stderr.read
+  }
+  
+  if 0 == $?
+    ManBook.logger.info "Successfully written '#{html_file_name}'"
   else
-    puts "groff -mandoc #{man_page_file} -T html > #{html_file_name}"
+    raise ManBook::CommandFailedError.new(cmd, result)
   end
 end
 
 begin
+  opts.parse!
+  
   ARGV.each{|man_page|
+    ManBook.logger.debug("Writing HTML for man page '#{man_page}'")
+    
     html_file = File.join(output_dir, html_name(man_page))
-    ManBook.logger.debug("Writing HTML page for #{man_page} to #{html_file}")
-    convert_to_html(man_page, html_file)
+    ManBook.logger.debug("Output page is #{html_file}")
+    
+    begin
+      convert_to_html(man_page, html_file)
+    rescue ManBook::ManPageNotFoundError => e
+      ManBook.logger.error e.message
+      ManBook.logger.debug "Backtrace:\n#{e.backtrace.join("\n")}"
+    end
   }
 rescue
   ManBook.logger.error $!.message
-  ManBook.logger.error $!.backtrace.join("\n")
+  ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
   ManBook.logger.info usage
   exit(1)
 end

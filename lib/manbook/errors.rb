@@ -5,9 +5,9 @@ module ManBook
     end
   end
 
-  class AmbiguousManPageError < ConfigurationError
-    def initialize(ambiguousSource)
-      super("There is more than one man page for #{ambiguousSource}. Please specify the man section.")
+  class CommandFailedError < ConfigurationError
+    def initialize(cmd, msg)
+      super("Executing #{cmd} failed: #{msg}")
     end
   end
 

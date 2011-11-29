@@ -8,7 +8,6 @@ require 'active_support/core_ext/module/attribute_accessors'
 
 require 'manbook/errors'
 require 'manbook/log_formatter'
-require 'manbook/channel_file_locator'
 
 module ManBook
   VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))  
