@@ -5,7 +5,7 @@ module ManBook
       if man_page_file =~ /\.gz$/
         cmd = "gunzip -c #{man_page_file} | groff -mandoc -T html > #{file_name}"
       else
-        cmd = puts "groff -mandoc #{man_page_file} -T html > #{file_name}"
+        cmd = "groff -mandoc #{man_page_file} -T html > #{file_name}"
       end
 
       ManBook.logger.debug("Executing #{cmd}")
