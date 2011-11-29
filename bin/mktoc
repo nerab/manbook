@@ -52,15 +52,17 @@ end
 
 begin
   opts.parse!
-
+  
+  INDEX_FILE = 'index.html'
+  
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
-    @pages = Dir.glob(File.join(src_dir, "*.html")).collect{|html_file|
+    @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_FILE == File.basename(f)}.collect{|html_file|
       ManBook::Parser.parse(html_file)
     }.sort{|l,r| l[:title] <=> r[:title]}
     
-    File.open(File.join(src_dir, 'index.html'), 'w') {|f|
+    File.open(File.join(src_dir, INDEX_FILE), 'w') {|f|
       f.write(render('index.html.erb'){
         @pages.collect{|page|
           begin

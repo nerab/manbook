@@ -1,1 +1,2 @@
-* evaluate whether we need paging for the index page
+* Evaluate whether we need paging for the index page
+* Do not overwrite existing files unless --force was given
