@@ -1,2 +1,3 @@
 * Create a about / welcome page that explains how this book came together
+* Potentially list authors
 * Do not overwrite existing files unless --force was given
