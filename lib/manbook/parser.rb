@@ -10,7 +10,14 @@ module ManBook
         # <h2>NAME</h2>
         # <p style="margin-left:11%; margin-top: 1em">git &minus; the stupid content tracker</p>
         #
-        title = Nokogiri::HTML(File.read(html_file)).xpath("//b[text() = 'NAME']/../following-sibling::p[1]/descendant-or-self::text()").to_s
+        doc = Nokogiri::HTML(File.read(html_file))
+        
+        title = doc.xpath("//b[text() = 'NAME']/../following-sibling::p[1]/descendant-or-self::text()").to_s 
+        
+        if title.empty?
+          title = doc.xpath("//h2[text() = 'NAME']/following-sibling::p[1]/descendant-or-self::text()").to_s
+        end
+        
         {:file_name => File.basename(html_file), :title => title}
       end
     end
