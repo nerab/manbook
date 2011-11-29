@@ -5,7 +5,10 @@ require 'logger'
 require 'active_support/core_ext/logger'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/module/attribute_accessors'
+require 'open4'
 
+require 'manbook/formatter'
+require 'manbook/html_formatter'
 require 'manbook/errors'
 require 'manbook/log_formatter'
 

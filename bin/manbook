@@ -26,7 +26,6 @@ def usage
 end
 
 require 'optparse'
-require 'open4'
 require 'manbook'
 
 output_dir = '.'
@@ -59,58 +58,24 @@ opts = OptionParser.new do |opts|
   opts.on("--output DIR", "Use DIR as output directory") do |dir|
     ManBook.logger.info "Using '#{dir}' as output directory"
     output_dir = dir
-    Dir.mkdir(output_dir) unless File.exist?(output_dir)
+    unless File.exist?(output_dir)
+      ManBook.logger.info "Creating output directory as it does not exist yet: #{output_dir}"
+      Dir.mkdir(output_dir)
+    end
   end
-end
-
-def html_name(man_page_file)
-  "#{File.basename(man_page_file)}.html"
-end
-
-def execute(cmd)
-  out, err = nil
-
-  status = Open4::popen4(cmd){|pid, stdin, stdout, stderr|
-    out = stdout.read
-    err = stderr.read
-  }
-
-  raise ManBook::CommandFailedError.new(cmd, err.chomp) if 0 != $?
-
-  out
-end
-
-def convert_to_html(man_page, html_file_name)
-  # locate the man file
-  begin
-    man_page_file = execute("man -w #{man_page}").chomp!
-  rescue ManBook::CommandFailedError => e
-    raise ManBook::ManPageNotFoundError.new(e.msg)
-  end
-
-  ManBook.logger.debug("Located man page at #{man_page_file}")
-  
-  # pipe through gunzip if gzipped
-  if man_page_file =~ /\.gz$/
-    cmd = "gunzip -c #{man_page_file} | groff -mandoc -T html > #{html_file_name}"
-  else
-    cmd = puts "groff -mandoc #{man_page_file} -T html > #{html_file_name}"
-  end
-  
-  ManBook.logger.debug("Executing #{cmd}")  
-  execute(cmd)
-  ManBook.logger.info "Successfully written '#{html_file_name}'"
 end
 
 begin
   opts.parse!
-  
+
+  raise "Which man page do you want to convert?" if ARGV.empty?
+
   ARGV.each{|man_page|
-    html_file = File.join(output_dir, html_name(man_page))
+    html_file = File.join(output_dir, "#{File.basename(man_page)}.html")
     ManBook.logger.debug("Output page is #{html_file}")
-    
+
     begin
-      convert_to_html(man_page, html_file)
+      ManBook::HtmlFormatter.new(man_page).convert(html_file)
     rescue ManBook::ManPageNotFoundError => e
       ManBook.logger.error e.message
       ManBook.logger.debug "Backtrace:\n#{e.backtrace.join("\n")}"
