@@ -26,7 +26,7 @@ def usage
 end
 
 require 'optparse'
-require 'open3'
+require 'open4'
 require 'manbook'
 
 output_dir = '.'
@@ -67,12 +67,25 @@ def html_name(man_page_file)
   "#{File.basename(man_page_file)}.html"
 end
 
+def execute(cmd)
+  out, err = nil
+
+  status = Open4::popen4(cmd){|pid, stdin, stdout, stderr|
+    out = stdout.read
+    err = stderr.read
+  }
+
+  raise ManBook::CommandFailedError.new(cmd, err.chomp) if 0 != $?
+
+  out
+end
+
 def convert_to_html(man_page, html_file_name)
   # locate the man file
-  man_page_file = %x[man -w #{man_page} 2>/dev/null].chomp
-
-  if 0 != $?
-    raise ManBook::ManPageNotFoundError.new(man_page)
+  begin
+    man_page_file = execute("man -w #{man_page}").chomp!
+  rescue ManBook::CommandFailedError => e
+    raise ManBook::ManPageNotFoundError.new(e.msg)
   end
 
   ManBook.logger.debug("Located man page at #{man_page_file}")
@@ -84,26 +97,15 @@ def convert_to_html(man_page, html_file_name)
     cmd = puts "groff -mandoc #{man_page_file} -T html > #{html_file_name}"
   end
   
-  ManBook.logger.debug("Executing #{cmd}")
-  
-  result = nil
-  Open3.popen3(cmd){|stdin, stdout, stderr|
-    result = stderr.read
-  }
-  
-  if 0 == $?
-    ManBook.logger.info "Successfully written '#{html_file_name}'"
-  else
-    raise ManBook::CommandFailedError.new(cmd, result)
-  end
+  ManBook.logger.debug("Executing #{cmd}")  
+  execute(cmd)
+  ManBook.logger.info "Successfully written '#{html_file_name}'"
 end
 
 begin
   opts.parse!
   
   ARGV.each{|man_page|
-    ManBook.logger.debug("Writing HTML for man page '#{man_page}'")
-    
     html_file = File.join(output_dir, html_name(man_page))
     ManBook.logger.debug("Output page is #{html_file}")
     
