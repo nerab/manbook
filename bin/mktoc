@@ -107,7 +107,8 @@ begin
   ManBook.logger.info
   ManBook.logger.info "  kindlegen #{File.join(src_dir, INDEX_OPF)} -o #{OUTPUT_FILE}"
   ManBook.logger.info
-  ManBook.logger.info "After that, the book will appear as #{File.join(src_dir, OUTPUT_FILE)}"
+  ManBook.logger.info "After that, the book will appear as #{File.join(src_dir, OUTPUT_FILE)}. You can"
+  ManBook.logger.info "then open it with the Kindle app or mail it to your kindle."
 rescue
   ManBook.logger.error $!.message
   ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"

@@ -9,15 +9,21 @@ manbook --  produces an eBook from man pages
     manbook <MANPAGE1> [<MANPAGE2> ...] --output <DIRECTORY>
     manbook --all --output <DIRECTORY>
 
+    mktoc <DIRECTORY>
+
 ## DESCRIPTION
 
 The `manbook` command can be used to produce an eBook from one or more
-man pages.
+man pages. 
+
+`mktoc` produces table-of-content files, suitable for MOBI files (Kindle,
+etc) from the HTML files in a directory.
 
 ## QUICKSTART
 
     gem install manbook
     manbook --help
+    mktoc --help
 
 ## MANPAGE
 
@@ -93,5 +99,4 @@ manbook is Copyright (C) 2011 Nicolas E. Rabenau. See LICENSE.txt for further de
 
 ## SEE ALSO
 
-groff(1),
-<http://en.wikipedia.org/wiki/Man_page>
+groff(1), <http://en.wikipedia.org/wiki/Man_page>, [mail2kindle](https://gist.github.com/1410840)
