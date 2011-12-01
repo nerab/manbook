@@ -46,6 +46,21 @@ class TestMkToc < Test::Unit::TestCase
       assert_empty(stdout.read)
     }
     assert_equal(0, status.exitstatus)
+    test_workproducts("title")
+  end
+
+  def test_overridden_title
+    title = "Foo42Bar"
+    status = Open4::popen4("#{app_script} #{@test_output_dir} --title \"#{title}\""){|pid, stdin, stdout, stderr|
+      assert_empty(stderr.read)
+      assert_empty(stdout.read)
+    }
+    assert_equal(0, status.exitstatus)
+    test_workproducts(title)
+  end
+
+private
+  def test_workproducts(title)
     assert_equal(@fixtures.size + WORKPRODUCTS.size,
                  Dir.glob(File.join(@test_output_dir, '*')).size)
 
@@ -55,15 +70,10 @@ class TestMkToc < Test::Unit::TestCase
       # dispatch to test that is specific to the work product
       wp_test = WORK_PRODUCT_TESTS[k]
       raise "No test defined for work product #{k}" if wp_test.nil?
-      send(wp_test)
+      send(wp_test, title)
     }
   end
 
-  def test_overridden_title
-    # TODO
-  end
-
-private
   def assert_empty(str, msg = nil)
     assert(str.nil? || str.empty?, "Should have been empty, but was: #{str}")
   end
@@ -72,21 +82,36 @@ private
     "#{APP_SCRIPT}"
   end
 
-  def work_product_test_html
+  def work_product_test_html(title)
     work_product_test(@fixtures, Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html'))), '/html/body/ul/li', 'a/@href')
+
+    # TODO title
+    # <html>
+    # <head>
+    #   <title>Overridden from commandline</title>
+    # </head>
+    # <body>
+    #   <h1 align=center>Overridden from commandline</h1>
   end
 
-  def work_product_test_ncx
+  def work_product_test_ncx(title)
     doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.ncx')))
     work_product_test(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
 
-    # TODO
+    # TODO id and order
     # navPoint
     #   @id="bash.html"
     #   @playOrder="0"
+
+    # TODO title
+    # <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+    #   <head>
+    #     <meta name="dtb:title" content="Overridden from commandline"/>
+    #   </head>
+    #   <docTitle><text>Overridden from commandline</text></docTitle>
   end
 
-  def work_product_test_opf
+  def work_product_test_opf(title)
     doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.opf')))
 
     # the opf must include links to index.html and index.ncx
@@ -100,6 +125,13 @@ private
                       doc,
                       '//xmlns:spine/xmlns:itemref',
                       '@idref')
+
+    # TODO title
+    # <package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">
+    #   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    #     <dc:title>Overridden from commandline</dc:title>
+    #     <dc:language>en</dc:language>
+    #     <dc:identifier id="uid">Overridden from commandline</dc:identifier>
   end
 
   def work_product_test(fixtures, doc, xpath_list, xpath_href)
