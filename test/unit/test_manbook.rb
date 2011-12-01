@@ -10,7 +10,7 @@ class TestManbook < Test::Unit::TestCase
   APP_SCRIPT = 'ruby bin/manbook'
 
   def setup
-    @test_output_dir = Dir.mktmpdir('test_unit', '.')
+    @test_output_dir = Dir.mktmpdir('test_unit_', '.')
   end
 
   def teardown
