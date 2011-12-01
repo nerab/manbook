@@ -69,6 +69,8 @@ begin
 
   GENERATOR = "#{File.basename(__FILE__)} v" + ManBook::VERSION
   
+  raise "Directory argument missing" if ARGV.empty?
+
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
@@ -77,7 +79,7 @@ begin
     ManBook::Parser.parse(html_file)
   }.sort{|l,r| l[:title] <=> r[:title]}
   
-  # build index.html
+  # index.html
   File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
     f.write(render('index.html.erb'){
       @pages.collect{|page|
@@ -96,7 +98,7 @@ begin
     f.write(render('manbook.opf.erb'))
   }
 
-  # build ncx file
+  # ncx file
   File.open(File.join(src_dir, INDEX_NCX), 'w') {|f|
     f.write(render('manbook.ncx.erb'))
   }
