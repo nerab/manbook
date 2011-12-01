@@ -14,7 +14,13 @@ module ManBook
           title = doc.xpath("//h2[text() = 'NAME']/following-sibling::p[1]/descendant-or-self::text()").to_s
         end
         
-        {:file_name => File.basename(html_file), :title => title.split("\n").join(' ')}
+        author = doc.xpath("//b[text() = 'AUTHORS']/../following-sibling::p[1]/descendant-or-self::text()").to_s
+
+        if author.empty?
+          author = doc.xpath("//h2[text() = 'AUTHORS']/following-sibling::p[1]/descendant-or-self::text()").to_s
+        end
+
+        {:file_name => File.basename(html_file), :title => title.split("\n").join(' '), :author => author.split("\n").join(' ')}
       end
     end
   end
