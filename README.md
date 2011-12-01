@@ -60,6 +60,9 @@ See `manbook --help` to view the options at any time.
     manbook ls grep bash --output ./my-favorite-pages/
     manbook -a -o ./manpages/
 
+    mktoc ./my-favorite-pages/
+    mktoc --title "Kindle and the Fourty Amazons" ./my-favorite-pages/
+
 # HISTORY #
 After I bought a Kindle, the idea was born to put the man pages of my Mac onto my Kindle. My requirements are:
 
