@@ -93,13 +93,6 @@ begin
     })
   }
 
-  # about.html
-  File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
-    f.write(render('index.html.erb'){
-      render('about.html.erb', binding)
-    })
-  }
-
   # opf file
   File.open(File.join(src_dir, INDEX_OPF), 'w') {|f|
     f.write(render('manbook.opf.erb'))
