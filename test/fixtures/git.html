@@ -1,0 +1,1882 @@
+<!-- Creator     : groff version 1.19.2 -->
+<!-- CreationDate: Tue Nov 29 21:01:36 2011 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p     { margin-top: 0; margin-bottom: 0; }
+       pre   { margin-top: 0; margin-bottom: 0; }
+       table { margin-top: 0; margin-bottom: 0; }
+</style>
+<title>GIT</title>
+
+</head>
+<body>
+
+<h1 align=center>GIT</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#FURTHER DOCUMENTATION">FURTHER DOCUMENTATION</a><br>
+<a href="#GIT COMMANDS">GIT COMMANDS</a><br>
+<a href="#HIGH-LEVEL COMMANDS (PORCELAIN)">HIGH-LEVEL COMMANDS (PORCELAIN)</a><br>
+<a href="#LOW-LEVEL COMMANDS (PLUMBING)">LOW-LEVEL COMMANDS (PLUMBING)</a><br>
+<a href="#CONFIGURATION MECHANISM">CONFIGURATION MECHANISM</a><br>
+<a href="#IDENTIFIER TERMINOLOGY">IDENTIFIER TERMINOLOGY</a><br>
+<a href="#SYMBOLIC IDENTIFIERS">SYMBOLIC IDENTIFIERS</a><br>
+<a href="#FILE/DIRECTORY STRUCTURE">FILE/DIRECTORY STRUCTURE</a><br>
+<a href="#TERMINOLOGY">TERMINOLOGY</a><br>
+<a href="#ENVIRONMENT VARIABLES">ENVIRONMENT VARIABLES</a><br>
+<a href="#DISCUSSION">DISCUSSION</a><br>
+<a href="#AUTHORS">AUTHORS</a><br>
+<a href="#REPORTING BUGS">REPORTING BUGS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#GIT">GIT</a><br>
+<a href="#NOTES">NOTES</a><br>
+
+<hr>
+
+
+<a name="NAME"></a>
+<h2>NAME</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">git &minus; the
+stupid content tracker</p>
+
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>git</i>
+[&minus;&minus;version]
+[&minus;&minus;exec&minus;path[=&lt;path&gt;]]
+[&minus;&minus;html&minus;path]
+[&minus;&minus;man&minus;path]
+[&minus;&minus;info&minus;path] <br>
+
+[&minus;p|&minus;&minus;paginate|&minus;&minus;no&minus;pager]
+[&minus;&minus;no&minus;replace&minus;objects] <br>
+[&minus;&minus;bare]
+[&minus;&minus;git&minus;dir=&lt;path&gt;]
+[&minus;&minus;work&minus;tree=&lt;path&gt;] <br>
+[&minus;c &lt;name&gt;=&lt;value&gt;] <br>
+[&minus;&minus;help] &lt;command&gt; [&lt;args&gt;]</p>
+
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Git is a fast,
+scalable, distributed revision control system with an
+unusually rich command set that provides both
+high&minus;level operations and full access to
+internals.</p>
+
+<p style="margin-left:11%; margin-top: 1em">See
+<b>gittutorial</b>(7) to get started, then see
+<b><font color="#0000FF">Everyday Git</font></b>
+<small><font color="#000000">[1]</font></small>
+<font color="#000000">for a useful minimum set of commands,
+and &quot;man git&minus;commandname&quot; for documentation
+of each command. CVS users may also want to read
+<b>gitcvs-migration</b>(7). See the</font>
+<b><font color="#0000FF">Git User&rsquo;s Manual</font></b>
+<small><font color="#000000">[2]</font></small>
+<font color="#000000">for a more in&minus;depth
+introduction.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+<i>&lt;command&gt;</i> is either a name of a Git command
+(see below) or an alias as defined in the configuration file
+(see <b>git-config</b>(1)).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Formatted
+and hyperlinked version of the latest git documentation can
+be viewed at
+http://www.kernel.org/pub/software/scm/git/docs/.</font></p>
+
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;version</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Prints
+the git suite version that the <i>git</i> program came
+from.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;help</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Prints
+the synopsis and a list of the most commonly used commands.
+If the option <i>&minus;&minus;all</i> or <i>&minus;a</i> is
+given then all available commands are printed. If a git
+command is named this option will bring up the manual page
+for that command.</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">Other
+options are available to control how the manual page is
+displayed. See <b>git-help</b>(1) for more information,
+because git &minus;&minus;help ... is converted internally
+into git help ....</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;c
+&lt;name&gt;=&lt;value&gt;</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Pass a
+configuration parameter to the command. The value given will
+override values from configuration files. The &lt;name&gt;
+is expected in the same format as listed by <i>git
+config</i> (subkeys separated by dots).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;exec&minus;path[=&lt;path&gt;]</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Path to
+wherever your core git programs are installed. This can also
+be controlled by setting the GIT_EXEC_PATH environment
+variable. If no path is given, <i>git</i> will print the
+current setting and then exit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;html&minus;path</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Print the
+path, without trailing slash, where git&rsquo;s HTML
+documentation is installed and exit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;man&minus;path</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Print the
+manpath (see man(1)) for the man pages for this version of
+git and exit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;info&minus;path</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Print the
+path where the Info files documenting this version of git
+are installed and exit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;p,
+&minus;&minus;paginate</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Pipe all
+output into <i>less</i> (or if set, $PAGER) if standard
+output is a terminal. This overrides the pager.&lt;cmd&gt;
+configuration options (see the &quot;Configuration
+Mechanism&quot; section below).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;no&minus;pager</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Do not
+pipe git output into a pager.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;git&minus;dir=&lt;path&gt;</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Set the
+path to the repository. This can also be controlled by
+setting the GIT_DIR environment variable. It can be an
+absolute path or relative path to current working
+directory.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;work&minus;tree=&lt;path&gt;</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Set the
+path to the working tree. It can be an absolute path or a
+path relative to the current working directory. This can
+also be controlled by setting the GIT_WORK_TREE environment
+variable and the core.worktree configuration variable (see
+core.worktree in <b>git-config</b>(1) for a more detailed
+discussion).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;bare</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Treat the
+repository as a bare repository. If GIT_DIR environment is
+not set, it is set to the current working
+directory.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&minus;&minus;no&minus;replace&minus;objects</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Do not
+use replacement refs to replace git objects. See
+<b>git-replace</b>(1) for more information.</font></p>
+
+<a name="FURTHER DOCUMENTATION"></a>
+<h2>FURTHER DOCUMENTATION</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">See
+the references above to get started using git. The following
+is probably more detail than necessary for a
+first&minus;time user.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The</font>
+<b><font color="#0000FF">git concepts chapter of the
+user&minus;manual</font></b>
+<small><font color="#000000">[3]</font></small>
+<font color="#000000">and <b>gitcore-tutorial</b>(7) both
+provide introductions to the underlying git
+architecture.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">See
+<b>gitworkflows</b>(7) for an overview of recommended
+workflows.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">See
+also the</font> <b><font color="#0000FF">howto</font></b>
+<small><font color="#000000">[4]</font></small>
+<font color="#000000">documents for some useful
+examples.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+internals are documented in the</font>
+<b><font color="#0000FF">GIT API documentation</font></b>
+<small><font color="#000000">[5]</font></small>
+<font color="#000000">.</font></p>
+
+<a name="GIT COMMANDS"></a>
+<h2>GIT COMMANDS</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">We
+divide git into high level (&quot;porcelain&quot;) commands
+and low level (&quot;plumbing&quot;) commands.</font></p>
+
+<a name="HIGH-LEVEL COMMANDS (PORCELAIN)"></a>
+<h2>HIGH-LEVEL COMMANDS (PORCELAIN)</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">We
+separate the porcelain commands into the main commands and
+some ancillary user utilities.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Main
+porcelain commands <br>
+git-add</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Add file
+contents to the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-am</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Apply a
+series of patches from a mailbox.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-archive</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create an
+archive of files from a named tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-bisect</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Find by
+binary search the change that introduced a bug.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-branch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">List,
+create, or delete branches.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-bundle</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Move
+objects and refs by archive.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-checkout</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Checkout
+a branch or paths to the working tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-cherry-pick</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Apply the
+changes introduced by some existing commits.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-citool</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Graphical
+alternative to git&minus;commit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-clean</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Remove
+untracked files from the working tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-clone</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Clone a
+repository into a new directory.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-commit</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Record
+changes to the repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-describe</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show the
+most recent tag that is reachable from a commit.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-diff</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+changes between commits, commit and working tree,
+etc.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fetch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Download
+objects and refs from another repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-format-patch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Prepare
+patches for e&minus;mail submission.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-gc</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Cleanup
+unnecessary files and optimize the local
+repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-grep</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Print
+lines matching a pattern.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-gui</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">A
+portable graphical interface to Git.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-init</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create an
+empty git repository or reinitialize an existing
+one.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-log</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+commit logs.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Join two
+or more development histories together.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mv</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Move or
+rename a file, a directory, or a symlink.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-notes</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Add or
+inspect object notes.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-pull</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Fetch
+from and merge with another repository or a local
+branch.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-push</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Update
+remote refs along with associated objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-rebase</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Forward&minus;port
+local commits to the updated upstream head.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-reset</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Reset
+current HEAD to the specified state.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-revert</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Revert
+some existing commits.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-rm</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Remove
+files from the working tree and from the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-shortlog</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Summarize
+<i>git log</i> output.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-show</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+various types of objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-stash</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Stash the
+changes in a dirty working directory away.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-status</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show the
+working tree status.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-submodule</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Initialize,
+update or inspect submodules.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-tag</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create,
+list, delete or verify a tag object signed with
+GPG.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>gitk</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">The git
+repository browser.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Ancillary
+Commands</b> <br>
+Manipulators:</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-config</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Get and
+set repository or global options.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fast-export</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Git data
+exporter.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fast-import</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Backend
+for fast Git data importers.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-filter-branch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Rewrite
+branches.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-lost-found</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">(deprecated)
+Recover lost refs that luckily have not yet been
+pruned.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mergetool</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Run merge
+conflict resolution tools to resolve merge
+conflicts.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-pack-refs</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Pack
+heads and tags for efficient repository access.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-prune</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Prune all
+unreachable objects from the object database.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-reflog</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Manage
+reflog information.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-relink</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Hardlink
+common objects in local repositories.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-remote</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">manage
+set of tracked repositories.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-repack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Pack
+unpacked objects in a repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-replace</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create,
+list, delete refs to replace objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-repo-config</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">(deprecated)
+Get and set repository or global options.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Interrogators:</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-annotate</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Annotate
+file lines with commit information.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-blame</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show what
+revision and author last modified each line of a
+file.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-cherry</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Find
+commits not merged upstream.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-count-objects</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Count
+unpacked number of objects and their disk
+consumption.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-difftool</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+changes using common diff tools.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fsck</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Verifies
+the connectivity and validity of the objects in the
+database.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-get-tar-commit-id</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Extract
+commit ID from an archive created using
+git&minus;archive.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-help</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">display
+help information about git.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-instaweb</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Instantly
+browse your working repository in gitweb.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+three&minus;way merge without touching index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-rerere</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Reuse
+recorded resolution of conflicted merges.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-rev-parse</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Pick out
+and massage parameters.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-show-branch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+branches and their commits.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-verify-tag</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Check the
+GPG signature of tags.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-whatchanged</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show logs
+with difference each commit introduces.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Interacting
+with Others</b> <br>
+These commands are to interact with foreign SCM and with
+other people via patch over e&minus;mail.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-archimport</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Import an
+Arch repository into git.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-cvsexportcommit</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Export a
+single commit to a CVS checkout.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-cvsimport</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Salvage
+your data out of another SCM people love to hate.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-cvsserver</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">A CVS
+server emulator for git.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-imap-send</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Send a
+collection of patches from stdin to an IMAP
+folder.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-quiltimport</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Applies a
+quilt patchset onto the current branch.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-request-pull</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Generates
+a summary of pending changes.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-send-email</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Send a
+collection of patches as emails.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-svn</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Bidirectional
+operation between a Subversion repository and
+git.</font></p>
+
+<a name="LOW-LEVEL COMMANDS (PLUMBING)"></a>
+<h2>LOW-LEVEL COMMANDS (PLUMBING)</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Although
+git includes its own porcelain layer, its low&minus;level
+commands are sufficient to support development of
+alternative porcelains. Developers of such porcelains might
+start by reading about <b>git-update-index</b>(1) and
+<b>git-read-tree</b>(1).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+interface (input, output, set of options and the semantics)
+to these low&minus;level commands are meant to be a lot more
+stable than Porcelain level commands, because these commands
+are primarily for scripted use. The interface to Porcelain
+commands on the other hand are subject to change in order to
+improve the end user experience.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+following description divides the low&minus;level commands
+into commands that manipulate objects (in the repository,
+index, and working tree), commands that interrogate and
+compare objects, and commands that move objects and
+references between repositories.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Manipulation
+commands <br>
+git-apply</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Apply a
+patch to files and/or to the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-checkout-index</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Copy
+files from the index to the working tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-commit-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create a
+new commit object.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-hash-object</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Compute
+object ID and optionally creates a blob from a
+file.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-index-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Build
+pack index file for an existing packed archive.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge-file</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Run a
+three&minus;way file merge.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge-index</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Run a
+merge for files needing merging.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mktag</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Creates a
+tag object.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mktree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Build a
+tree&minus;object from ls&minus;tree formatted
+text.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-pack-objects</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create a
+packed archive of objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-prune-packed</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Remove
+extra objects that are already in pack files.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-read-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Reads
+tree information into the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-symbolic-ref</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Read and
+modify symbolic refs.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-unpack-objects</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Unpack
+objects from a packed archive.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-update-index</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Register
+file contents in the working tree to the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-update-ref</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Update
+the object name stored in a ref safely.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-write-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Create a
+tree object from the current index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Interrogation
+commands <br>
+git-cat-file</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Provide
+content or type and size information for repository
+objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-diff-files</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Compares
+files in the working tree and the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-diff-index</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Compares
+content and mode of blobs between the index and
+repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-diff-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Compares
+the content and mode of blobs found via two tree
+objects.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-for-each-ref</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Output
+information on each ref.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-ls-files</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+information about files in the index and the working
+tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-ls-remote</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">List
+references in a remote repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-ls-tree</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">List the
+contents of a tree object.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge-base</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Find as
+good common ancestors as possible for a merge.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-name-rev</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Find
+symbolic names for given revs.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-pack-redundant</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Find
+redundant pack files.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-rev-list</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Lists
+commit objects in reverse chronological order.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-show-index</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show
+packed archive index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-show-ref</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">List
+references in a local repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-tar-tree</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">(deprecated)
+Create a tar archive of the files in the named tree
+object.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-unpack-file</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Creates a
+temporary file with a blob&rsquo;s contents.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-var</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Show a
+git logical variable.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-verify-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Validate
+packed git archive files.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">In
+general, the interrogate commands do not touch the files in
+the working tree.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Synching
+repositories <br>
+git-daemon</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">A really
+simple server for git repositories.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fetch-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Receive
+missing objects from another repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-http-backend</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Server
+side implementation of Git over HTTP.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-send-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Push
+objects over git protocol to another repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-update-server-info</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Update
+auxiliary info file to help dumb servers.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+following are helper commands used by the above; end users
+typically do not use them directly.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-http-fetch</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Download
+from a remote git repository via HTTP.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-http-push</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Push
+objects over HTTP/DAV to another repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-parse-remote</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Routines
+to help parsing remote repository access
+parameters.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-receive-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Receive
+what is pushed into the repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-shell</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Restricted
+login shell for Git&minus;only SSH access.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-upload-archive</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Send
+archive back to git&minus;archive.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-upload-pack</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Send
+objects packed back to
+git&minus;fetch&minus;pack.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>Internal
+helper commands</b> <br>
+These are internal helper commands used by other commands;
+end users typically do not use them directly.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-check-attr</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Display
+gitattributes information.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-check-ref-format</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Ensures
+that a reference name is well formed.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-fmt-merge-msg</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Produce a
+merge commit message.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mailinfo</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Extracts
+patch and authorship from a single e&minus;mail
+message.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-mailsplit</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Simple
+UNIX mbox splitter program.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-merge-one-file</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">The
+standard helper program to use with
+git&minus;merge&minus;index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-patch-id</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Compute
+unique ID for a patch.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-peek-remote</b>(1)</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">(deprecated)
+List the references in a remote repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-sh-setup</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Common
+git shell script setup code.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git-stripspace</b>(1)</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Filter
+out empty lines.</font></p>
+
+<a name="CONFIGURATION MECHANISM"></a>
+<h2>CONFIGURATION MECHANISM</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Starting
+from 0.99.9 (actually mid 0.99.8.GIT), .git/config file is
+used to hold per&minus;repository configuration options. It
+is a simple text file modeled after .ini format familiar to
+some people. Here is an example:</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">#
+<br>
+# A '#' or ';' character indicates a comment. <br>
+#</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">;
+core variables <br>
+[core] <br>
+; Don't trust file modes <br>
+filemode = false</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">;
+user identity <br>
+[user] <br>
+name = &quot;Junio C Hamano&quot; <br>
+email = &quot;junkio@twinsun.com&quot;</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Various
+commands read from the configuration file and adjust their
+operation accordingly. See <b>git-config</b>(1) for a
+list.</font></p>
+
+<a name="IDENTIFIER TERMINOLOGY"></a>
+<h2>IDENTIFIER TERMINOLOGY</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;object&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+the object name for any type of object.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;blob&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a blob object name.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;tree&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a tree object name.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;commit&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a commit object name.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;tree&minus;ish&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a tree, commit or tag object name. A command that takes a
+&lt;tree&minus;ish&gt; argument ultimately wants to operate
+on a &lt;tree&gt; object but automatically dereferences
+&lt;commit&gt; and &lt;tag&gt; objects that point at a
+&lt;tree&gt;.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;commit&minus;ish&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a commit or tag object name. A command that takes a
+&lt;commit&minus;ish&gt; argument ultimately wants to
+operate on a &lt;commit&gt; object but automatically
+dereferences &lt;tag&gt; objects that point at a
+&lt;commit&gt;.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;type&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+that an object type is required. Currently one of: blob,
+tree, commit, or tag.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;file&gt;</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">Indicates
+a filename &minus; almost always relative to the root of the
+tree structure GIT_INDEX_FILE describes.</font></p>
+
+<a name="SYMBOLIC IDENTIFIERS"></a>
+<h2>SYMBOLIC IDENTIFIERS</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Any
+git command accepting any &lt;object&gt; can also use the
+following symbolic notation:</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">HEAD</font></p>
+
+
+<p style="margin-left:17%;"><font color="#000000">indicates
+the head of the current branch (i.e. the contents of
+$GIT_DIR/HEAD).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;tag&gt;</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">a valid
+tag <i>name</i> (i.e. the contents of
+$GIT_DIR/refs/tags/&lt;tag&gt;).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;head&gt;</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">a valid
+head <i>name</i> (i.e. the contents of
+$GIT_DIR/refs/heads/&lt;head&gt;).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">For
+a more complete list of ways to spell object names, see
+&quot;SPECIFYING REVISIONS&quot; section in
+<b>gitrevisions</b>(7).</font></p>
+
+<a name="FILE/DIRECTORY STRUCTURE"></a>
+<h2>FILE/DIRECTORY STRUCTURE</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Please
+see the <b>gitrepository-layout</b>(5) document.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Read
+<b>githooks</b>(5) for more details about each
+hook.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Higher
+level SCMs may provide and manage additional information in
+the $GIT_DIR.</font></p>
+
+<a name="TERMINOLOGY"></a>
+<h2>TERMINOLOGY</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Please
+see <b>gitglossary</b>(7).</font></p>
+
+<a name="ENVIRONMENT VARIABLES"></a>
+<h2>ENVIRONMENT VARIABLES</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Various
+git commands use the following environment
+variables:</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>The
+git Repository</b> <br>
+These environment variables apply to <i>all</i> core git
+commands. Nb: it is worth noting that they may be
+used/overridden by SCMS sitting above git so take care if
+using Cogito etc.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_INDEX_FILE</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">This
+environment allows the specification of an alternate index
+file. If not specified, the default of $GIT_DIR/index is
+used.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_OBJECT_DIRECTORY</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If the
+object storage directory is specified via this environment
+variable then the sha1 directories are created underneath
+&minus; otherwise the default $GIT_DIR/objects directory is
+used.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_ALTERNATE_OBJECT_DIRECTORIES</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Due to
+the immutable nature of git objects, old objects can be
+archived into shared, read&minus;only directories. This
+variable specifies a &quot;:&quot; separated (on Windows
+&quot;;&quot; separated) list of git object directories
+which can be used to search for git objects. New objects
+will not be written to these directories.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_DIR</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If the
+<i>GIT_DIR</i> environment variable is set then it specifies
+a path to use instead of the default .git for the base of
+the repository.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_WORK_TREE</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Set the
+path to the working tree. The value will not be used in
+combination with repositories found automatically in a .git
+directory (i.e. $GIT_DIR is not set). This can also be
+controlled by the <i>&minus;&minus;work&minus;tree</i>
+command line option and the core.worktree configuration
+variable.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_CEILING_DIRECTORIES</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">This
+should be a colon&minus;separated list of absolute paths. If
+set, it is a list of directories that git should not chdir
+up into while looking for a repository directory. It will
+not exclude the current working directory or a GIT_DIR set
+on the command line or in the environment. (Useful for
+excluding slow&minus;loading network
+directories.)</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_DISCOVERY_ACROSS_FILESYSTEM</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">When run
+in a directory that does not have &quot;.git&quot;
+repository directory, git tries to find such a directory in
+the parent directories to find the top of the working tree,
+but by default it does not cross filesystem boundaries. This
+environment variable can be set to true to tell git not to
+stop at filesystem boundaries. Like
+<i>GIT_CEILING_DIRECTORIES</i>, this will not affect an
+explicit repository directory set via <i>GIT_DIR</i> or on
+the command line.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git
+Commits</b> <i><br>
+GIT_AUTHOR_NAME</i>, <i>GIT_AUTHOR_EMAIL</i>,
+<i>GIT_AUTHOR_DATE</i>, <i>GIT_COMMITTER_NAME</i>,
+<i>GIT_COMMITTER_EMAIL</i>, <i>GIT_COMMITTER_DATE</i>,
+<i>EMAIL</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">see
+<b>git-commit-tree</b>(1)</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>git
+Diffs</b> <i><br>
+GIT_DIFF_OPTS</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">Only
+valid setting is &quot;&minus;&minus;unified=??&quot; or
+&quot;&minus;u??&quot; to set the number of context lines
+shown when a unified diff is created. This takes precedence
+over any &quot;&minus;U&quot; or
+&quot;&minus;&minus;unified&quot; option value passed on the
+git diff command line.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_EXTERNAL_DIFF</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">When the
+environment variable <i>GIT_EXTERNAL_DIFF</i> is set, the
+program named by it is called, instead of the diff
+invocation described above. For a path that is added,
+removed, or modified, <i>GIT_EXTERNAL_DIFF</i> is called
+with 7 parameters:</font></p>
+
+
+<p style="margin-left:23%; margin-top: 1em"><font color="#000000">path
+old&minus;file old&minus;hex old&minus;mode new&minus;file
+new&minus;hex new&minus;mode</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">where:</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;old|new&gt;&minus;file</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">are files
+GIT_EXTERNAL_DIFF can use to read the contents of
+&lt;old|new&gt;,</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;old|new&gt;&minus;hex</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">are the
+40&minus;hexdigit SHA1 hashes,</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">&lt;old|new&gt;&minus;mode</font></p>
+
+<p style="margin-left:17%;"><font color="#000000">are the
+octal representation of the file modes.</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">The
+file parameters can point at the user&rsquo;s working file
+(e.g. new&minus;file in
+&quot;git&minus;diff&minus;files&quot;), /dev/null (e.g.
+old&minus;file when a new file is added), or a temporary
+file (e.g. old&minus;file in the index).
+<i>GIT_EXTERNAL_DIFF</i> should not worry about unlinking
+the temporary file &minus;&minus;&minus; it is removed when
+<i>GIT_EXTERNAL_DIFF</i> exits.</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">For
+a path that is unmerged, <i>GIT_EXTERNAL_DIFF</i> is called
+with 1 parameter, &lt;path&gt;.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>other</b>
+<i><br>
+GIT_MERGE_VERBOSITY</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">A number
+controlling the amount of output shown by the recursive
+merge strategy. Overrides merge.verbosity. See
+<b>git-merge</b>(1)</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_PAGER</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">This
+environment variable overrides $PAGER. If it is set to an
+empty string or to the value &quot;cat&quot;, git will not
+launch a pager. See also the core.pager option in
+<b>git-config</b>(1).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_SSH</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If this
+environment variable is set then <i>git fetch</i> and <i>git
+push</i> will use this command instead of <i>ssh</i> when
+they need to connect to a remote system. The <i>$GIT_SSH</i>
+command will be given exactly two arguments: the
+<i>username@host</i> (or just <i>host</i>) from the URL and
+the shell command to execute on that remote
+system.</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">To
+pass options to the program that you want to list in GIT_SSH
+you will need to wrap the program and options into a shell
+script, then set GIT_SSH to refer to the shell
+script.</font></p>
+
+
+<p style="margin-left:17%; margin-top: 1em"><font color="#000000">Usually
+it is easier to configure any desired options through your
+personal .ssh/config file. Please consult your ssh
+documentation for further details.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_ASKPASS</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If this
+environment variable is set, then git commands which need to
+acquire passwords or passphrases (e.g. for HTTP or IMAP
+authentication) will call this program with a suitable
+prompt as command line argument and read the password from
+its STDOUT. See also the <i>core.askpass</i> option in
+<b>git-config</b>(1).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_FLUSH</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If this
+environment variable is set to &quot;1&quot;, then commands
+such as <i>git blame</i> (in incremental mode), <i>git
+rev&minus;list</i>, <i>git log</i>, and <i>git
+whatchanged</i> will force a flush of the output stream
+after each commit&minus;oriented record have been flushed.
+If this variable is set to &quot;0&quot;, the output of
+these commands will be done using completely buffered I/O.
+If this environment variable is not set, git will choose
+buffered or record&minus;oriented flushing based on whether
+stdout appears to be redirected to a file or not.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><i>GIT_TRACE</i></font></p>
+
+<p style="margin-left:17%;"><font color="#000000">If this
+variable is set to &quot;1&quot;, &quot;2&quot; or
+&quot;true&quot; (comparison is case insensitive), git will
+print trace: messages on stderr telling about alias
+expansion, built&minus;in command execution and external
+command execution. If this variable is set to an integer
+value greater than 1 and lower than 10 (strictly) then git
+will interpret this value as an open file descriptor and
+will try to write the trace messages into this file
+descriptor. Alternatively, if this variable is set to an
+absolute path (starting with a <i>/</i> character), git will
+interpret this as a file path and will try to write the
+trace messages into it.</font></p>
+
+<a name="DISCUSSION"></a>
+<h2>DISCUSSION</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">More
+detail on the following is available from the</font>
+<b><font color="#0000FF">git concepts chapter of the
+user&minus;manual</font></b>
+<small><font color="#000000">[3]</font></small>
+<font color="#000000">and
+<b>gitcore-tutorial</b>(7).</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">A
+git project normally consists of a working directory with a
+&quot;.git&quot; subdirectory at the top level. The .git
+directory contains, among other things, a compressed object
+database representing the complete history of the project,
+an &quot;index&quot; file which links that history to the
+current contents of the working tree, and named pointers
+into that history such as tags and branch heads.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+object database contains objects of three main types: blobs,
+which hold file data; trees, which point to blobs and other
+trees to build up directory hierarchies; and commits, which
+each reference a single tree and some number of parent
+commits.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+commit, equivalent to what other systems call a
+&quot;changeset&quot; or &quot;version&quot;, represents a
+step in the project&rsquo;s history, and each parent
+represents an immediately preceding step. Commits with more
+than one parent represent merges of independent lines of
+development.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">All
+objects are named by the SHA1 hash of their contents,
+normally written as a string of 40 hex digits. Such names
+are globally unique. The entire history leading up to a
+commit can be vouched for by signing just that commit. A
+fourth object type, the tag, is provided for this
+purpose.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">When
+first created, objects are stored in individual files, but
+for efficiency may later be compressed together into
+&quot;pack files&quot;.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Named
+pointers called refs mark interesting points in history. A
+ref may contain the SHA1 name of an object or the name of
+another ref. Refs with names beginning ref/head/ contain the
+SHA1 name of the most recent commit (or &quot;head&quot;) of
+a branch under development. SHA1 names of tags of interest
+are stored under ref/tags/. A special ref named HEAD
+contains the name of the currently checked&minus;out
+branch.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+index file is initialized with a list of all paths and, for
+each path, a blob object and a set of attributes. The blob
+object represents the contents of the file as of the head of
+the current branch. The attributes (last modified time,
+size, etc.) are taken from the corresponding file in the
+working tree. Subsequent changes to the working tree can be
+found by comparing these attributes. The index may be
+updated with new content, and new commits may be created
+from the content stored in the index.</font></p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">The
+index is also capable of storing multiple entries (called
+&quot;stages&quot;) for a given pathname. These stages are
+used to hold the various unmerged version of a file when a
+merge is in progress.</font></p>
+
+<a name="AUTHORS"></a>
+<h2>AUTHORS</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Git
+was started by Linus Torvalds, and is currently maintained
+by Junio C Hamano. Numerous contributions have come from the
+git mailing list
+&lt;</font><b><font color="#0000FF">git@vger.kernel.org</font></b>
+<small><font color="#000000">[6]</font></small>
+<font color="#000000">&gt;. For a more complete list of
+contributors, see</font>
+<b><font color="#0000FF">http://git&minus;scm.com/about</font></b><font color="#000000">.
+If you have a clone of git.git itself, the output of
+<b>git-shortlog</b>(1) and <b>git-blame</b>(1) can show you
+the authors for specific parts of the project.</font></p>
+
+<a name="REPORTING BUGS"></a>
+<h2>REPORTING BUGS</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Report
+bugs to the Git mailing list
+&lt;</font><b><font color="#0000FF">git@vger.kernel.org</font></b>
+<small><font color="#000000">[6]</font></small>
+<font color="#000000">&gt; where the development and
+maintenance is primarily done. You do not have to be
+subscribed to the list to send a message there.</font></p>
+
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000"><b>gittutorial</b>(7),
+<b>gittutorial-2</b>(7),</font>
+<b><font color="#0000FF">Everyday Git</font></b>
+<small><font color="#000000">[1]</font></small>
+<font color="#000000">, <b>gitcvs-migration</b>(7),
+<b>gitglossary</b>(7), <b>gitcore-tutorial</b>(7),
+<b>gitcli</b>(7),</font> <b><font color="#0000FF">The Git
+User&rsquo;s Manual</font></b>
+<small><font color="#000000">[2]</font></small>
+<font color="#000000">, <b>gitworkflows</b>(7)</font></p>
+
+<a name="GIT"></a>
+<h2>GIT</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><font color="#000000">Part
+of the <b>git</b>(1) suite</font></p>
+
+<a name="NOTES"></a>
+<h2>NOTES</h2>
+
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">1.</font></p> </td>
+<td width="2%"></td>
+<td width="18%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">Everyday
+Git</font></p> </td>
+<td width="65%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">http://www.kernel.org/pub/software/scm/git/docs/everyday.html</font></p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">2.</font></p> </td>
+<td width="2%"></td>
+<td width="26%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">Git
+User&rsquo;s Manual</font></p></td>
+<td width="57%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">http://www.kernel.org/pub/software/scm/git/docs/user-manual.html</font></p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">3.</font></p> </td>
+<td width="2%"></td>
+<td width="60%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">git
+concepts chapter of the user-manual</font></p></td>
+<td width="23%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">http://www.kernel.org/pub/software/scm/git/docs/user-manual.html#git-concepts</font></p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">4.</font></p> </td>
+<td width="2%"></td>
+<td width="8%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">howto</font></p> </td>
+<td width="75%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">http://www.kernel.org/pub/software/scm/git/docs/howto-index.html</font></p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">5.</font></p> </td>
+<td width="2%"></td>
+<td width="32%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">GIT
+API documentation</font></p></td>
+<td width="51%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">http://www.kernel.org/pub/software/scm/git/docs/technical/api-index.html</font></p>
+
+<table width="100%" border=0 rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="12%"></td>
+<td width="3%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">6.</font></p> </td>
+<td width="2%"></td>
+<td width="29%">
+
+
+
+<p style="margin-top: 1em" valign="top"><font color="#000000">git@vger.kernel.org</font></p> </td>
+<td width="54%">
+</td>
+</table>
+
+
+<p style="margin-left:17%;"><font color="#000000">mailto:git@vger.kernel.org</font></p>
+<hr>
+</body>
+</html>

@@ -16,4 +16,5 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'manbook'
 
 class Test::Unit::TestCase
+  FIXTURES_DIR = File.join(File.dirname(__FILE__), 'fixtures')
 end

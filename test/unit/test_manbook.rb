@@ -4,7 +4,7 @@ require 'tmpdir'
 require 'fileutils'
 
 #
-# End-to-end test
+# End-to-end test the manbook
 #
 class TestManbook < Test::Unit::TestCase
   APP_SCRIPT = 'ruby bin/manbook'
