@@ -67,7 +67,7 @@ begin
   INDEX_NCX = 'index.ncx'
   OUTPUT_FILE = 'manbook.mobi'
 
-  GENERATOR = "#{File.basename(__FILE__)} " + ManBook::VERSION
+  GENERATOR = "#{File.basename(__FILE__)} v" + ManBook::VERSION
   
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
