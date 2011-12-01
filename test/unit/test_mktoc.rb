@@ -73,34 +73,55 @@ private
   end
 
   def work_product_test_html
-    doc = Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html')))
+    work_product_test(@fixtures, Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html'))), '/html/body/ul/li', 'a/@href')
+  end
+
+  def work_product_test_ncx
+    doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.ncx')))
+    work_product_test(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+
+    # TODO
+    # navPoint
+    #   @id="bash.html"
+    #   @playOrder="0"
+  end
+
+  def work_product_test_opf
+    doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.opf')))
+
+    # the opf must include links to index.html and index.ncx
+    work_product_test(['index.html', 'index.ncx'].concat(@fixtures),
+                      doc,
+                      '//xmlns:manifest/xmlns:item',
+                      '@href')
+
+    # cross-references within the document
+    work_product_test(['toc'].concat(@fixtures),
+                      doc,
+                      '//xmlns:spine/xmlns:itemref',
+                      '@idref')
+  end
+
+  def work_product_test(fixtures, doc, xpath_list, xpath_href)
     assert_not_nil(doc)
 
-    list = doc.xpath('/html/body/ul/li')
+    list = doc.xpath(xpath_list)
     assert_not_nil(list)
 
     # every fixture file should be listed
-    assert_equal(@fixtures.size, list.size)
+    assert_equal(fixtures.size, list.size)
 
-    hrefs = list.map{|li| li.xpath('a/@href').to_s}
+    hrefs = list.map{|li| li.xpath(xpath_href).to_s}
     assert_not_nil(hrefs)
 
     # each work product must be linked
-    @fixtures.each{|fixture|
-      assert(hrefs.include?(fixture))
+    fixtures.each{|fixture|
+      assert(hrefs.include?(fixture), "Could not find '#{fixture}' in #{hrefs.inspect}")
     }
 
     # each link must point to a work product
     hrefs.each{|li|
-      assert(@fixtures.include?(li))
+      assert(fixtures.include?(li), "Could not find '#{li}' in #{fixtures.inspect}")
     }
-  end
-
-  def work_product_test_ncx
-    # TODO
-  end
-
-  def work_product_test_opf
-    # TODO
   end
 end
