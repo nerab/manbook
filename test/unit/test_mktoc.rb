@@ -87,23 +87,22 @@ private
     work_product_test(@fixtures, doc, '/html/body/ul/li', 'a/@href')
     assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
     assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
+
+    # TODO assert generator
   end
 
   def work_product_test_ncx(title)
     doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.ncx')))
     work_product_test(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+    assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
+    assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
 
     # TODO id and order
     # navPoint
     #   @id="bash.html"
     #   @playOrder="0"
 
-    # TODO title
-    # <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
-    #   <head>
-    #     <meta name="dtb:title" content="Overridden from commandline"/>
-    #   </head>
-    #   <docTitle><text>Overridden from commandline</text></docTitle>
+    # TODO assert generator
   end
 
   def work_product_test_opf(title)
@@ -127,6 +126,8 @@ private
     #     <dc:title>Overridden from commandline</dc:title>
     #     <dc:language>en</dc:language>
     #     <dc:identifier id="uid">Overridden from commandline</dc:identifier>
+
+    # TODO assert generator
   end
 
   def work_product_test(fixtures, doc, xpath_list, xpath_href)
