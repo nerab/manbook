@@ -20,12 +20,15 @@ class TestMkToc < Test::Unit::TestCase
   #
   # expected work products
   #
-  WORKPRODUCTS = {:html => 'index.html', :ncx => 'index.ncx', :opf => 'index.opf'}
+  WORKPRODUCTS = {:html => 'index.html', :ncx => 'index.ncx', :opf => 'index.opf', :about => 'about.html'}
 
   #
   # which method tests which work product
   #
-  WORK_PRODUCT_TESTS = {:html => 'work_product_test_html', :ncx => 'work_product_test_ncx', :opf => 'work_product_test_opf'}
+  WORK_PRODUCT_TESTS = {:html => 'work_product_test_html',
+                        :ncx => 'work_product_test_ncx',
+                        :opf => 'work_product_test_opf',
+                        :about => 'work_product_test_about'}
 
   def setup
     @test_output_dir = Dir.mktmpdir('test_unit_', '.')
@@ -89,7 +92,7 @@ private
 
   def work_product_test_html(title)
     doc = Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html')))
-    work_product_test(@fixtures, doc, '/html/body/ul/li', 'a/@href')
+    work_product_test(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
     assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
     assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
     assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
@@ -97,7 +100,7 @@ private
 
   def work_product_test_ncx(title)
     doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.ncx')))
-    work_product_test(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+    work_product_test(['about.html'].concat(@fixtures), doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
     assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
     assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
     assert_equal(GENERATOR, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:generator']/@content").to_s)
@@ -112,13 +115,13 @@ private
     doc = Nokogiri::XML(File.read(File.join(@test_output_dir, 'index.opf')))
 
     # the opf must include links to index.html and index.ncx
-    work_product_test(['index.html', 'index.ncx'].concat(@fixtures),
+    work_product_test(['index.html', 'index.ncx', 'about.html'].concat(@fixtures),
                       doc,
                       '//xmlns:manifest/xmlns:item',
                       '@href')
 
     # cross-references within the document
-    work_product_test(['toc'].concat(@fixtures),
+    work_product_test(['toc', 'about.html'].concat(@fixtures),
                       doc,
                       '//xmlns:spine/xmlns:itemref',
                       '@idref')
@@ -130,6 +133,10 @@ private
     assert_equal(GENERATOR, doc.xpath('/xmlns:package/xmlns:metadata/dc:generator/text()',
                                      {'dc' => "http://purl.org/dc/elements/1.1/",
                                       'xmlns' => 'http://www.idpf.org/2007/opf'}).first.to_s)
+  end
+
+  def work_product_test_about(title)
+    # no further tests
   end
 
   def work_product_test(fixtures, doc, xpath_list, xpath_href)
