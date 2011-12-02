@@ -4,7 +4,7 @@ require 'tmpdir'
 require 'fileutils'
 
 #
-# End-to-end for mktoc
+# End-to-end test for mktoc
 #
 module ManBookTest
   class TestMkToc < ManBookTest::TestCase
@@ -19,7 +19,7 @@ module ManBookTest
     GENERATOR = "mktoc v#{ManBook::VERSION}"
 
     #
-    # expected work products
+    # generated work products (in addition to HTML input files that were created externally)
     #
     WORKPRODUCTS = {:html  => 'index.html',
                     :ncx   => 'index.ncx',
@@ -28,13 +28,13 @@ module ManBookTest
                     :cover => 'library_books.jpg'}
 
     #
-    # which method tests which work product
+    # which method tests what work product
     #
-    WORK_PRODUCT_TESTS = {:html  => 'work_product_test_html',
-                          :ncx   => 'work_product_test_ncx',
-                          :opf   => 'work_product_test_opf',
-                          :about => 'work_product_test_about',
-                          :cover => 'work_product_test_cover'}
+    WORK_PRODUCT_TESTS = {:html  => 'assert_workproduct_html',
+                          :ncx   => 'assert_workproduct_ncx',
+                          :opf   => 'assert_workproduct_opf',
+                          :about => 'assert_workproduct_about',
+                          :cover => 'assert_workproduct_cover'}
 
     def setup
       super
@@ -56,7 +56,7 @@ module ManBookTest
         assert_empty(stdout.read)
       }
       assert_equal(0, status.exitstatus)
-      test_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      assert_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title
@@ -66,7 +66,7 @@ module ManBookTest
         assert_empty(stdout.read)
       }
       assert_equal(0, status.exitstatus)
-      test_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      assert_all_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_no_cover_image
@@ -82,7 +82,7 @@ module ManBookTest
     end
 
   private
-    def test_workproducts(title, cover_image = nil)
+    def assert_all_workproducts(title, cover_image = nil)
       assert_equal(@fixtures.size + WORKPRODUCTS.size, Dir.glob(File.join(output_dir, '*')).size)
 
       WORKPRODUCTS.each{|k,v|
@@ -103,9 +103,9 @@ module ManBookTest
       "#{APP_SCRIPT}"
     end
 
-    def work_product_test_html(title, cover_image = nil)
+    def assert_workproduct_html(title, cover_image = nil)
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
-      work_product_test(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
+      assert_workproduct(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
 
       # index.html does not use the book title, but "Table Of Contents"
       assert_equal("Table Of Contents", doc.xpath('/html/head/title/text()').to_s)
@@ -115,12 +115,12 @@ module ManBookTest
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
 
-    def work_product_test_ncx(title, cover_image = nil)
+    def assert_workproduct_ncx(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
 
       fixtures = ['about.html'].concat(@fixtures)
       fixtures << cover_image unless cover_image.nil?
-      work_product_test(fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+      assert_workproduct(fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
 
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
@@ -132,18 +132,18 @@ module ManBookTest
       #   @playOrder="0"
     end
 
-    def work_product_test_opf(title, cover_image = nil)
+    def assert_workproduct_opf(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
       item_fixtures = ['index.html', 'index.ncx', 'about.html'].concat(@fixtures)
       item_fixtures << cover_image unless cover_image.nil?
-      work_product_test(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
+      assert_workproduct(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
 
       # cross-references within the document
       xref_fixtures = ['toc', 'about.html'].concat(@fixtures)
       xref_fixtures << 'cover-image' unless cover_image.nil?
-      work_product_test(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
+      assert_workproduct(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
 
       assert_equal(title, doc.xpath('/xmlns:package/xmlns:metadata/dc:title/text()',
                                     {'dc' => "http://purl.org/dc/elements/1.1/",
@@ -159,15 +159,15 @@ module ManBookTest
       end
     end
 
-    def work_product_test_about(title, cover_image = nil)
+    def assert_workproduct_about(title, cover_image = nil)
       # no further tests
     end
 
-    def work_product_test_cover(title, cover_image = nil)
+    def assert_workproduct_cover(title, cover_image = nil)
       # no further tests
     end
 
-    def work_product_test(fixtures, doc, xpath_list, xpath_href)
+    def assert_workproduct(fixtures, doc, xpath_list, xpath_href)
       assert_not_nil(doc)
 
       list = doc.xpath(xpath_list)
