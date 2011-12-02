@@ -90,8 +90,11 @@ module ManBookTest
     def work_product_test_html(title)
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
       work_product_test(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
-      assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
-      assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
+
+      # index.html does not use the book title, but "Table Of Contents"
+      assert_equal("Table Of Contents", doc.xpath('/html/head/title/text()').to_s)
+      assert_equal("Table Of Contents", doc.xpath('/html/body/h1[1]/text()').to_s)
+
       assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
