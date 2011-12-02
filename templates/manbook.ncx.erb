@@ -12,7 +12,7 @@
 
   <navMap>
     <% @pages.each_with_index{|page, i| %>
-      <navPoint id="<%= page[:file_name] %>" playOrder="<%= i %>">
+      <navPoint id="<%= page[:file_name] %>" playOrder="<%= i + 1 %>">
         <navLabel><text><%= page[:title] %></text></navLabel>
         <content src="<%= page[:file_name] %>" />
       </navPoint>
