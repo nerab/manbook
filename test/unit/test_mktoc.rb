@@ -30,11 +30,11 @@ module ManBookTest
     #
     # which method tests what work product
     #
-    WORK_PRODUCT_TESTS = {:html  => 'assert_workproduct_html',
-                          :ncx   => 'assert_workproduct_ncx',
-                          :opf   => 'assert_workproduct_opf',
-                          :about => 'assert_workproduct_about',
-                          :cover => 'assert_workproduct_cover'}
+    WORK_PRODUCT_TESTS = {:html  => 'test_workproduct_html',
+                          :ncx   => 'test_workproduct_ncx',
+                          :opf   => 'test_workproduct_opf',
+                          :about => 'test_workproduct_about',
+                          :cover => 'test_workproduct_cover'}
 
     def setup
       super
@@ -43,30 +43,18 @@ module ManBookTest
     end
 
     def test_no_args
-      status = Open4::popen4(app_script){|pid, stdin, stdout, stderr|
-        assert_match(/ERROR: Directory argument missing/, stderr.read)
-        assert_empty(stdout.read)
-      }
-      assert_not_equal(0, status.exitstatus)
+      assert_exec("#{app_script}", false, nil, /ERROR: Directory argument missing/)
     end
 
     def test_defaults
-      status = Open4::popen4("#{app_script} #{output_dir}"){|pid, stdin, stdout, stderr|
-        assert_empty(stderr.read)
-        assert_empty(stdout.read)
-      }
-      assert_equal(0, status.exitstatus)
-      assert_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      assert_exec("#{app_script} #{output_dir}")
+      test_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title
       title = "Foo42Bar"
-      status = Open4::popen4("#{app_script} #{output_dir} --title \"#{title}\""){|pid, stdin, stdout, stderr|
-        assert_empty(stderr.read)
-        assert_empty(stdout.read)
-      }
-      assert_equal(0, status.exitstatus)
-      assert_all_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      assert_exec("#{app_script} #{output_dir} --title \"#{title}\"")
+      test_all_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_no_cover_image
@@ -82,7 +70,7 @@ module ManBookTest
     end
 
   private
-    def assert_all_workproducts(title, cover_image = nil)
+    def test_all_workproducts(title, cover_image = nil)
       assert_equal(@fixtures.size + WORKPRODUCTS.size, Dir.glob(File.join(output_dir, '*')).size)
 
       WORKPRODUCTS.each{|k,v|
@@ -95,6 +83,28 @@ module ManBookTest
       }
     end
 
+    def assert_exec(cmd, assert_status_success = true, re_stdout = nil, re_stderr = nil)
+      status = Open4::popen4(cmd){|pid, stdin, stdout, stderr|
+        if re_stdout.nil?
+          assert_empty(stdout.read)
+        else
+          assert_match(re_stdout, stdout.read)
+        end
+
+        if re_stderr.nil?
+          assert_empty(stderr.read)
+        else
+          assert_match(re_stderr, stderr.read)
+        end
+      }
+
+      if assert_status_success
+        assert_equal(0, status.exitstatus)
+      else
+        assert_not_equal(0, status.exitstatus)
+      end
+    end
+
     def assert_empty(str, msg = nil)
       assert(str.nil? || str.empty?, "Should have been empty, but was: #{str}")
     end
@@ -103,7 +113,7 @@ module ManBookTest
       "#{APP_SCRIPT}"
     end
 
-    def assert_workproduct_html(title, cover_image = nil)
+    def test_workproduct_html(title, cover_image = nil)
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
       assert_workproduct(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
 
@@ -115,7 +125,7 @@ module ManBookTest
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
 
-    def assert_workproduct_ncx(title, cover_image = nil)
+    def test_workproduct_ncx(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
 
       fixtures = ['about.html'].concat(@fixtures)
@@ -132,7 +142,7 @@ module ManBookTest
       #   @playOrder="0"
     end
 
-    def assert_workproduct_opf(title, cover_image = nil)
+    def test_workproduct_opf(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
@@ -159,11 +169,11 @@ module ManBookTest
       end
     end
 
-    def assert_workproduct_about(title, cover_image = nil)
+    def test_workproduct_about(title, cover_image = nil)
       # no further tests
     end
 
-    def assert_workproduct_cover(title, cover_image = nil)
+    def test_workproduct_cover(title, cover_image = nil)
       # no further tests
     end
 
