@@ -14,7 +14,7 @@
 <% unless @cover_image.nil? %>
     <item id="cover-image" href="<%= @cover_image %>" media-type="image/gif" />
 <% end %>
-    <item id="contents" href="index.html" media-type="text/html" />
+    <item id="index" href="index.html" media-type="text/html" />
     <item id="toc" href="index.ncx" media-type="application/x-dtbncx+xml"/>
     <% @pages.each{|page| %>
     <item id="<%= page[:file_name] %>" href="<%= page[:file_name] %>" media-type="text/html" />
@@ -24,7 +24,7 @@
 <% unless @cover_image.nil? %>
     <itemref idref="cover-image" />
 <% end %>
-    <itemref idref="toc" />
+    <itemref idref="index" />
     <% @pages.each{|page| %>
     <itemref idref="<%= page[:file_name] %>" />
     <% } %>

@@ -163,7 +163,7 @@ module ManBookTest
       assert_workproduct(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
 
       # cross-references within the document
-      xref_fixtures = ['toc', 'about.html'].concat(@fixtures)
+      xref_fixtures = ['index', 'about.html'].concat(@fixtures)
       xref_fixtures << 'cover-image' unless cover_image.nil?
       assert_workproduct(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
 
