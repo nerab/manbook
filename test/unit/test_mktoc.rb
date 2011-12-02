@@ -24,8 +24,7 @@ module ManBookTest
     WORKPRODUCTS = {:html  => 'index.html',
                     :ncx   => 'index.ncx',
                     :opf   => 'index.opf',
-                    :about => 'about.html',
-                    :cover => 'library_books.jpg'}
+                    :about => 'about.html'}
 
     #
     # which method tests what work product
@@ -39,7 +38,7 @@ module ManBookTest
     def setup
       super
       FileUtils.cp_r(File.join(FIXTURES_DIR, '.'), output_dir)
-      @fixtures = Dir.glob(File.join(FIXTURES_DIR, '*')).map{|f| File.basename(f)}
+      @fixtures = Dir.glob(File.join(FIXTURES_DIR, '*.html')).map{|f| File.basename(f)}
     end
 
     def test_no_args
@@ -58,23 +57,36 @@ module ManBookTest
     end
 
     def test_no_cover_image
-      # TODO
+      assert_exec("#{app_script} #{output_dir} --no-cover-image")
+      test_all_workproducts(ManBook::TITLE_DEFAULT, nil)
     end
 
     def test_alt_cover_image
-      # TODO
+      cover_image = ManBook::COVER_IMAGE_DEFAULT
+      assert(File.exist?(cover_image))
+      assert_exec("#{app_script} #{output_dir} --cover-image #{cover_image}")
+      test_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(cover_image))
     end
 
     def test_alt_cover_image_not_found
-      # TODO
+      cover_image = "DOES_NOT_EXIST"
+      assert(!File.exist?(cover_image))
+      assert_exec("#{app_script} #{output_dir} --cover-image #{cover_image}", false, nil, /ERROR: Could not find cover image/)
     end
 
   private
     def test_all_workproducts(title, cover_image = nil)
-      assert_equal(@fixtures.size + WORKPRODUCTS.size, Dir.glob(File.join(output_dir, '*')).size)
+      if cover_image.nil?
+        workproducts = WORKPRODUCTS
+      else
+        workproducts = WORKPRODUCTS.merge({:cover => 'library_books.jpg'})
+      end
 
-      WORKPRODUCTS.each{|k,v|
-        assert(File.exist?(File.join(output_dir, v)))
+      assert_equal(@fixtures.size + workproducts.size, Dir.glob(File.join(output_dir, '*')).size)
+
+      workproducts.each{|k,v|
+        vf = File.join(output_dir, v)
+        assert(File.exist?(vf), "Expect #{vf} to exist")
 
         # dispatch to test that is specific to the work product
         wp_test = WORK_PRODUCT_TESTS[k]

@@ -57,12 +57,12 @@ opts = OptionParser.new do |opts|
     exit 0
   end
 
-  opts.on("--title TITLE", "Use TITLE as book title") do |title|
+  opts.on("--title STRING", "Use TITLE as book title") do |title|
     ManBook.logger.info "Setting book title to '#{title}'"
     @book_title = title
   end
 
-  opts.on("--cover-image", "Reference a cover image") do |cover_image|
+  opts.on("--cover-image FILE", "Reference a cover image") do |cover_image|
     ManBook.logger.info "Cover image set to #{cover_image}"
     @cover_image = cover_image
   end
@@ -86,8 +86,8 @@ begin
   if @cover_image.nil?
     ManBook.logger.debug("No cover image will be used")
   else
-    ManBook.logger.debug("Using cover image  #{@cover_image}")
-    raise "Cover image not found" unless File.exist?(@cover_image)
+    ManBook.logger.debug("Using cover image #{@cover_image}")
+    raise "Could not find cover image" unless File.exist?(@cover_image)
     FileUtils.cp(@cover_image, src_dir)
 
     # continue working with the copy
