@@ -63,6 +63,7 @@ begin
   opts.parse!
   
   INDEX_HTML = 'index.html'
+  INDEX_HTML = 'about.html'
   INDEX_OPF = 'index.opf'
   INDEX_NCX = 'index.ncx'
   OUTPUT_FILE = 'manbook.mobi'
@@ -90,6 +91,13 @@ begin
           ManBook.logger.debug "Backtrace:\n#{$!.backtrace.join("\n")}"
         end
       }.join
+    })
+  }
+
+  # about.html
+  File.open(File.join(src_dir, ABOUT_HTML), 'w') {|f|
+    f.write(render('index.html.erb'){
+      render('about.html.erb', binding)
     })
   }
 
