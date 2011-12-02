@@ -5,7 +5,7 @@ $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 require 'rubygems'
 
 help = <<HELP
-Creates table of contents (TOC) files for all HTML files in a directory. This 
+Creates table of contents (TOC) files for all HTML files in a directory. This
 tool was built to prepare HTML pages for the Kindle.
 
 Author: Nicolas E. Rabenau nerab@gmx.at
@@ -61,32 +61,38 @@ end
 
 begin
   opts.parse!
-  
-  INDEX_HTML = 'index.html'
-  ABOUT_HTML = 'about.html'
-  INDEX_OPF = 'index.opf'
-  INDEX_NCX = 'index.ncx'
+
+  INDEX_HTML  = 'index.html'
+  ABOUT_HTML  = 'about.html'
+  INDEX_OPF   = 'index.opf'
+  INDEX_NCX   = 'index.ncx'
   OUTPUT_FILE = 'manbook.mobi'
 
   GENERATOR = "#{File.basename(__FILE__)} v#{ManBook::VERSION}"
-  
+
   raise "Directory argument missing" if ARGV.empty?
 
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
 
-  # We generate about.html first so it is going to be picked up by the indexers
+  # We generate about.html first so it is going to be picked up by the file finder
   File.open(File.join(src_dir, ABOUT_HTML), 'w') {|f|
+    # Override page title. Would love to use a local here, but calling render with binding at this stage fails.
+    @title = "About this book"
+
     f.write(render('application.html.erb'){
-      render('about.html.erb', binding)
+      render('about.html.erb')
     })
+
+    # undefine title
+    remove_instance_variable(:@title)
   }
 
   # find pages
   @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_HTML == File.basename(f)}.collect{|html_file|
     ManBook::Parser.parse(html_file)
   }.sort{|l,r| l[:title] <=> r[:title]}
-  
+
   # index.html
   File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
     f.write(render('application.html.erb'){

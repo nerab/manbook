@@ -93,6 +93,7 @@ module ManBookTest
       assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
       assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
       assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
+      assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
 
     def work_product_test_ncx(title)

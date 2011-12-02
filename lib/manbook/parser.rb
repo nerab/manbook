@@ -7,13 +7,18 @@ module ManBook
         # to extract the title of a man page ín a reliable way.
         #
         doc = Nokogiri::HTML(File.read(html_file))
-        
-        title = doc.xpath("//b[text() = 'NAME']/../following-sibling::p[1]/descendant-or-self::text()").to_s 
-        
-        if title.empty?
+
+        title = doc.xpath("//b[text() = 'NAME']/../following-sibling::p[1]/descendant-or-self::text()").to_s
+
+        if title.blank?
           title = doc.xpath("//h2[text() = 'NAME']/following-sibling::p[1]/descendant-or-self::text()").to_s
         end
-        
+
+        # fall back to document title
+        if title.blank?
+          title = doc.xpath("//html/head/title/text()").to_s
+        end
+
         author = doc.xpath("//b[text() = 'AUTHORS']/../following-sibling::p[1]/descendant-or-self::text()").to_s
 
         if author.empty?

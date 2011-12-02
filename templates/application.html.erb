@@ -15,9 +15,10 @@
     ul, ol, blockquote, pre, dl, hr {margin-top: .125em; margin-bottom: .5em;}
     .toc ul {list-style: none; padding-left: 0; margin-left: 20px;}
   </style>
-  <title><%= @book_title %></title>
+  <title><%= @title || @book_title %></title>
 </head>
 <body>
+<h1><%= @title || @book_title %></h1>
 <%= yield %>
 </body>
 </html>
