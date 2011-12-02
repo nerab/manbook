@@ -120,12 +120,9 @@ private
                       '//xmlns:spine/xmlns:itemref',
                       '@idref')
 
-    # TODO title
-    # <package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">
-    #   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
-    #     <dc:title>Overridden from commandline</dc:title>
-    #     <dc:language>en</dc:language>
-    #     <dc:identifier id="uid">Overridden from commandline</dc:identifier>
+    assert_equal(title, doc.xpath('/xmlns:package/xmlns:metadata/dc:title/text()',
+                                  {'dc' => "http://purl.org/dc/elements/1.1/",
+                                   'xmlns' => 'http://www.idpf.org/2007/opf'}).to_s)
 
     # TODO assert generator
   end
