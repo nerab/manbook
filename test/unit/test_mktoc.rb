@@ -13,6 +13,11 @@ class TestMkToc < Test::Unit::TestCase
   APP_SCRIPT = 'ruby bin/mktoc'
 
   #
+  # generator identification
+  #
+  GENERATOR = "mktoc v#{ManBook::VERSION}"
+
+  #
   # expected work products
   #
   WORKPRODUCTS = {:html => 'index.html', :ncx => 'index.ncx', :opf => 'index.opf'}
@@ -87,8 +92,7 @@ private
     work_product_test(@fixtures, doc, '/html/body/ul/li', 'a/@href')
     assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
     assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
-
-    # TODO assert generator
+    assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
   end
 
   def work_product_test_ncx(title)
@@ -96,13 +100,12 @@ private
     work_product_test(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
     assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
     assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
+    assert_equal(GENERATOR, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:generator']/@content").to_s)
 
     # TODO id and order
     # navPoint
     #   @id="bash.html"
     #   @playOrder="0"
-
-    # TODO assert generator
   end
 
   def work_product_test_opf(title)
@@ -124,7 +127,9 @@ private
                                   {'dc' => "http://purl.org/dc/elements/1.1/",
                                    'xmlns' => 'http://www.idpf.org/2007/opf'}).to_s)
 
-    # TODO assert generator
+    assert_equal(GENERATOR, doc.xpath('/xmlns:package/xmlns:metadata/dc:generator/text()',
+                                     {'dc' => "http://purl.org/dc/elements/1.1/",
+                                      'xmlns' => 'http://www.idpf.org/2007/opf'}).first.to_s)
   end
 
   def work_product_test(fixtures, doc, xpath_list, xpath_href)
