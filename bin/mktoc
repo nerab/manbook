@@ -95,6 +95,7 @@ begin
 
   # index.html
   File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
+    @title = "Table Of Contents"
     f.write(render('application.html.erb'){
       render('index.html.erb'){
         @pages.collect{|page|
@@ -107,9 +108,11 @@ begin
         }.join
       }
     })
+    remove_instance_variable(:@title)
   }
 
   # opf file
+  # TODO add index.html so that the pseudo toc shows index.html, but index.html does not link to itself
   File.open(File.join(src_dir, INDEX_OPF), 'w') {|f|
     f.write(render('manbook.opf.erb'))
   }
