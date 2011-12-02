@@ -40,13 +40,13 @@ class TestMkToc < Test::Unit::TestCase
     assert_not_equal(0, status.exitstatus)
   end
 
-  def test_plain
+  def test_defaults
     status = Open4::popen4("#{app_script} #{@test_output_dir}"){|pid, stdin, stdout, stderr|
       assert_empty(stderr.read)
       assert_empty(stdout.read)
     }
     assert_equal(0, status.exitstatus)
-    test_workproducts("title")
+    test_workproducts(ManBook::TITLE_DEFAULT)
   end
 
   def test_overridden_title
@@ -83,15 +83,10 @@ private
   end
 
   def work_product_test_html(title)
-    work_product_test(@fixtures, Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html'))), '/html/body/ul/li', 'a/@href')
-
-    # TODO title
-    # <html>
-    # <head>
-    #   <title>Overridden from commandline</title>
-    # </head>
-    # <body>
-    #   <h1 align=center>Overridden from commandline</h1>
+    doc = Nokogiri::HTML(File.read(File.join(@test_output_dir, 'index.html')))
+    work_product_test(@fixtures, doc, '/html/body/ul/li', 'a/@href')
+    assert_equal(title, doc.xpath('/html/head/title/text()').to_s)
+    assert_equal(title, doc.xpath('/html/body/h1[1]/text()').to_s)
   end
 
   def work_product_test_ncx(title)

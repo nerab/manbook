@@ -16,7 +16,9 @@ require 'manbook/errors'
 require 'manbook/log_formatter'
 
 module ManBook
-  VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))  
+  VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))
+  TITLE_DEFAULT = "ManBook - a book of selected man pages"
+
   mattr_accessor :logger
   
   unless @@logger

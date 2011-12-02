@@ -27,7 +27,7 @@ require 'manbook'
 require 'erb'
 
 # defaults
-@book_title = "ManBook - a book of selected man pages"
+@book_title = ManBook::TITLE_DEFAULT
 
 opts = OptionParser.new do |opts|
   opts.banner = help
