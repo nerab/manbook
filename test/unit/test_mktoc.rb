@@ -21,15 +21,20 @@ module ManBookTest
     #
     # expected work products
     #
-    WORKPRODUCTS = {:html => 'index.html', :ncx => 'index.ncx', :opf => 'index.opf', :about => 'about.html'}
+    WORKPRODUCTS = {:html  => 'index.html',
+                    :ncx   => 'index.ncx',
+                    :opf   => 'index.opf',
+                    :about => 'about.html',
+                    :cover => 'library_books.jpg'}
 
     #
     # which method tests which work product
     #
-    WORK_PRODUCT_TESTS = {:html => 'work_product_test_html',
-                          :ncx => 'work_product_test_ncx',
-                          :opf => 'work_product_test_opf',
-                          :about => 'work_product_test_about'}
+    WORK_PRODUCT_TESTS = {:html  => 'work_product_test_html',
+                          :ncx   => 'work_product_test_ncx',
+                          :opf   => 'work_product_test_opf',
+                          :about => 'work_product_test_about',
+                          :cover => 'work_product_test_cover'}
 
     def setup
       super
@@ -51,7 +56,7 @@ module ManBookTest
         assert_empty(stdout.read)
       }
       assert_equal(0, status.exitstatus)
-      test_workproducts(ManBook::TITLE_DEFAULT)
+      test_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title
@@ -61,13 +66,24 @@ module ManBookTest
         assert_empty(stdout.read)
       }
       assert_equal(0, status.exitstatus)
-      test_workproducts(title)
+      test_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+    end
+
+    def test_no_cover_image
+      # TODO
+    end
+
+    def test_alt_cover_image
+      # TODO
+    end
+
+    def test_alt_cover_image_not_found
+      # TODO
     end
 
   private
-    def test_workproducts(title)
-      assert_equal(@fixtures.size + WORKPRODUCTS.size,
-                   Dir.glob(File.join(output_dir, '*')).size)
+    def test_workproducts(title, cover_image = nil)
+      assert_equal(@fixtures.size + WORKPRODUCTS.size, Dir.glob(File.join(output_dir, '*')).size)
 
       WORKPRODUCTS.each{|k,v|
         assert(File.exist?(File.join(output_dir, v)))
@@ -75,7 +91,7 @@ module ManBookTest
         # dispatch to test that is specific to the work product
         wp_test = WORK_PRODUCT_TESTS[k]
         raise "No test defined for work product #{k}" if wp_test.nil?
-        send(wp_test, title)
+        send(wp_test, title, cover_image)
       }
     end
 
@@ -87,7 +103,7 @@ module ManBookTest
       "#{APP_SCRIPT}"
     end
 
-    def work_product_test_html(title)
+    def work_product_test_html(title, cover_image = nil)
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
       work_product_test(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
 
@@ -99,9 +115,13 @@ module ManBookTest
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
 
-    def work_product_test_ncx(title)
+    def work_product_test_ncx(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
-      work_product_test(['about.html'].concat(@fixtures), doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+
+      fixtures = ['about.html'].concat(@fixtures)
+      fixtures << cover_image unless cover_image.nil?
+      work_product_test(fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
       assert_equal(GENERATOR, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:generator']/@content").to_s)
@@ -112,20 +132,18 @@ module ManBookTest
       #   @playOrder="0"
     end
 
-    def work_product_test_opf(title)
+    def work_product_test_opf(title, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
-      work_product_test(['index.html', 'index.ncx', 'about.html'].concat(@fixtures),
-                        doc,
-                        '//xmlns:manifest/xmlns:item',
-                        '@href')
+      item_fixtures = ['index.html', 'index.ncx', 'about.html'].concat(@fixtures)
+      item_fixtures << cover_image unless cover_image.nil?
+      work_product_test(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
 
       # cross-references within the document
-      work_product_test(['toc', 'about.html'].concat(@fixtures),
-                        doc,
-                        '//xmlns:spine/xmlns:itemref',
-                        '@idref')
+      xref_fixtures = ['toc', 'about.html'].concat(@fixtures)
+      xref_fixtures << 'cover-image' unless cover_image.nil?
+      work_product_test(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
 
       assert_equal(title, doc.xpath('/xmlns:package/xmlns:metadata/dc:title/text()',
                                     {'dc' => "http://purl.org/dc/elements/1.1/",
@@ -134,9 +152,18 @@ module ManBookTest
       assert_equal(GENERATOR, doc.xpath('/xmlns:package/xmlns:metadata/dc:generator/text()',
                                        {'dc' => "http://purl.org/dc/elements/1.1/",
                                         'xmlns' => 'http://www.idpf.org/2007/opf'}).first.to_s)
+
+      # reference to cover image in meta data. The other two references were already tested above
+      unless cover_image.nil?
+        assert_equal('cover-image', doc.xpath("/xmlns:package/xmlns:metadata/xmlns:meta[@name='cover']/@content").to_s)
+      end
     end
 
-    def work_product_test_about(title)
+    def work_product_test_about(title, cover_image = nil)
+      # no further tests
+    end
+
+    def work_product_test_cover(title, cover_image = nil)
       # no further tests
     end
 

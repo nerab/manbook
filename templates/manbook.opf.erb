@@ -6,8 +6,14 @@
     <dc:identifier id="uid"><%= @book_title %></dc:identifier>
     <dc:creator opf:role="aut">Multiple Authors</dc:creator>
     <dc:generator><%= GENERATOR %></dc:generator>
+<% unless @cover_image.nil? %>
+    <meta name="cover" content="cover-image"/>
+<% end %>
   </metadata>
   <manifest>
+<% unless @cover_image.nil? %>
+    <item id="cover-image" href="<%= @cover_image %>" media-type="image/gif" />
+<% end %>
     <item id="contents" href="index.html" media-type="text/html" />
     <item id="toc" href="index.ncx" media-type="application/x-dtbncx+xml"/>
     <% @pages.each{|page| %>
@@ -15,6 +21,9 @@
     <% } %>
   </manifest>
   <spine toc="toc">
+<% unless @cover_image.nil? %>
+    <itemref idref="cover-image" />
+<% end %>
     <itemref idref="toc" />
     <% @pages.each{|page| %>
     <itemref idref="<%= page[:file_name] %>" />

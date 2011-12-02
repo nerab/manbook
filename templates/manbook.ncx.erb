@@ -11,11 +11,18 @@
   <docTitle><text><%= @book_title %></text></docTitle>
 
   <navMap>
+    <% i = 0 %>
     <% @pages.each_with_index{|page, i| %>
       <navPoint id="<%= page[:file_name] %>" playOrder="<%= i + 1 %>">
         <navLabel><text><%= page[:title] %></text></navLabel>
         <content src="<%= page[:file_name] %>" />
       </navPoint>
     <% } %>
+<% unless @cover_image.nil? %>
+    <navPoint id="cover-image" playOrder="<%= i + 1 %>">
+      <navLabel><text>Cover</text></navLabel>
+        <content src="<%= @cover_image %>"/>
+    </navPoint>
+<% end %>
   </navMap>
 </ncx>

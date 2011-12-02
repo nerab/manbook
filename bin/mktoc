@@ -26,8 +26,16 @@ require 'optparse'
 require 'manbook'
 require 'erb'
 
+INDEX_HTML  = 'index.html'
+ABOUT_HTML  = 'about.html'
+INDEX_OPF   = 'index.opf'
+INDEX_NCX   = 'index.ncx'
+OUTPUT_FILE = 'manbook.mobi'
+GENERATOR = "#{File.basename(__FILE__)} v#{ManBook::VERSION}"
+
 # defaults
-@book_title = ManBook::TITLE_DEFAULT
+@book_title  = ManBook::TITLE_DEFAULT
+@cover_image = ManBook::COVER_IMAGE_DEFAULT
 
 opts = OptionParser.new do |opts|
   opts.banner = help
@@ -53,6 +61,15 @@ opts = OptionParser.new do |opts|
     ManBook.logger.info "Setting book title to '#{title}'"
     @book_title = title
   end
+
+  opts.on("--cover-image", "Reference a cover image") do |cover_image|
+    ManBook.logger.info "Cover image set to #{cover_image}"
+    @cover_image = cover_image
+  end
+
+  opts.on("--no-cover-image", "Do not reference a cover image") do
+    @cover_image = nil
+  end
 end
 
 def render(template, my_binding = binding)
@@ -62,18 +79,20 @@ end
 begin
   opts.parse!
 
-  INDEX_HTML  = 'index.html'
-  ABOUT_HTML  = 'about.html'
-  INDEX_OPF   = 'index.opf'
-  INDEX_NCX   = 'index.ncx'
-  OUTPUT_FILE = 'manbook.mobi'
-
-  GENERATOR = "#{File.basename(__FILE__)} v#{ManBook::VERSION}"
-
   raise "Directory argument missing" if ARGV.empty?
-
   src_dir = ARGV.first
   ManBook.logger.debug("Operating in directory #{src_dir}")
+
+  if @cover_image.nil?
+    ManBook.logger.debug("No cover image will be used")
+  else
+    ManBook.logger.debug("Using cover image  #{@cover_image}")
+    raise "Cover image not found" unless File.exist?(@cover_image)
+    FileUtils.cp(@cover_image, src_dir)
+
+    # continue working with the copy
+    @cover_image = File.basename(@cover_image)
+  end
 
   # We generate about.html first so it is going to be picked up by the file finder
   File.open(File.join(src_dir, ABOUT_HTML), 'w') {|f|

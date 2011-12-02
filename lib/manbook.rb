@@ -18,9 +18,10 @@ require 'manbook/log_formatter'
 module ManBook
   VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))
   TITLE_DEFAULT = "ManBook - a book of selected man pages"
+  COVER_IMAGE_DEFAULT = File.join(File.dirname(__FILE__), '..', 'templates', 'library_books.jpg')
 
   mattr_accessor :logger
-  
+
   unless @@logger
     @@logger = Logger.new(STDERR)
     @@logger.level = Logger::WARN
