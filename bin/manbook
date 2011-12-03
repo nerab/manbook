@@ -65,6 +65,8 @@ opts = OptionParser.new do |opts|
   end
 end
 
+error_count = 0
+
 begin
   opts.parse!
 
@@ -79,6 +81,7 @@ begin
     rescue ManBook::ManPageNotFoundError => e
       ManBook.logger.error e.message
       ManBook.logger.debug "Backtrace:\n#{e.backtrace.join("\n")}"
+      error_count += 1
     end
   }
 rescue
@@ -87,3 +90,5 @@ rescue
   ManBook.logger.info usage
   exit(1)
 end
+
+exit error_count

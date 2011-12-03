@@ -63,6 +63,10 @@ See `manbook --help` to view the options at any time.
     mktoc ./my-favorite-pages/
     mktoc --title "Kindle and the Fourty Amazons" ./my-favorite-pages/
 
+## EXIT STATUS
+
+The `manbook` command returns with exit code other than 0 (zero) if one or more man pages could not be found or converted. If all goes well, the exit code will be 0.
+
 # HISTORY #
 After I bought a Kindle, the idea was born to put the man pages of my Mac onto my Kindle. My requirements are:
 
