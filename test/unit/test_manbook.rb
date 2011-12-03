@@ -39,6 +39,14 @@ module ManBookTest
       assert_not_equal(0, status.exitstatus)
     end
 
+    def test_existing_and_nonexisting_pages
+      status = Open4::popen4("#{app_script} ls deadbeef"){|pid, stdin, stdout, stderr|
+        assert_match(/ERROR: No manual entry for deadbeef/, stderr.read)
+        assert(stdout.read.empty?)
+      }
+      assert_not_equal(0, status.exitstatus)
+    end
+
     def test_nonexisting_page_multiple
       pages = %w[foobar deadbeef]
       status = Open4::popen4("#{app_script} #{pages.join(' ')}"){|pid, stdin, stdout, stderr|
