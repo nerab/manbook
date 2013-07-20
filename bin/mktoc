@@ -2,8 +2,6 @@
 
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
-require 'rubygems'
-
 help = <<HELP
 Creates table of contents (TOC) files for all HTML files in a directory. This
 tool was built to prepare HTML pages for the Kindle.
@@ -25,6 +23,7 @@ end
 require 'optparse'
 require 'manbook'
 require 'erb'
+require 'fileutils'
 
 INDEX_HTML  = 'index.html'
 ABOUT_HTML  = 'about.html'
@@ -36,6 +35,7 @@ GENERATOR = "#{File.basename(__FILE__)} v#{ManBook::VERSION}"
 # defaults
 @book_title  = ManBook::TITLE_DEFAULT
 @cover_image = ManBook::COVER_IMAGE_DEFAULT
+@book_author = ManBook::AUTHOR_DEFAULT
 
 opts = OptionParser.new do |opts|
   opts.banner = help
@@ -62,6 +62,11 @@ opts = OptionParser.new do |opts|
     @book_title = title
   end
 
+  opts.on("--author STRING", "Use AUTHOR as book author") do |author|
+    ManBook.logger.info "Setting book author to '#{author}'"
+    @book_author = author
+  end
+
   opts.on("--cover-image FILE", "Reference a cover image") do |cover_image|
     ManBook.logger.info "Cover image set to #{cover_image}"
     @cover_image = cover_image
@@ -73,7 +78,7 @@ opts = OptionParser.new do |opts|
 end
 
 def render(template, my_binding = binding)
-  ERB.new(File.new(File.join(File.dirname(__FILE__), '..', 'templates', template)), 0, "%<>").result(my_binding)
+  ERB.new(File.new(File.join(File.dirname(__FILE__), '..', 'templates', template)).read, 0, "%<>").result(my_binding)
 end
 
 begin

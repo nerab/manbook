@@ -2,7 +2,6 @@ $:.unshift File.dirname(__FILE__)
 
 require 'bundler/setup'
 require 'logger'
-require 'active_support/core_ext/logger'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/module/attribute_accessors'
 require 'open4'
@@ -18,6 +17,7 @@ require 'manbook/log_formatter'
 module ManBook
   VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))
   TITLE_DEFAULT = "ManBook - a book of selected man pages"
+  AUTHOR_DEFAULT = "Multiple Authors"
   COVER_IMAGE_DEFAULT = File.join(File.dirname(__FILE__), '..', 'templates', 'library_books.jpg')
 
   mattr_accessor :logger

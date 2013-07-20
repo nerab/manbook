@@ -2,8 +2,6 @@
 
 $:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
 
-require 'rubygems'
-
 help = <<HELP
 The manbook command can be used to produce an eBook from one or more man pages.
 

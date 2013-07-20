@@ -4,7 +4,7 @@
     <dc:title><%= @book_title %></dc:title>
     <dc:language>en</dc:language>
     <dc:identifier id="uid"><%= @book_title %></dc:identifier>
-    <dc:creator opf:role="aut">Multiple Authors</dc:creator>
+    <dc:creator opf:role="aut"><%= @book_author %></dc:creator>
     <dc:generator><%= GENERATOR %></dc:generator>
 <% unless @cover_image.nil? %>
     <meta name="cover" content="cover-image"/>

@@ -1,2 +1,2 @@
 * Do not overwrite existing files unless --force was given
-* Potentially list authors
+* Prevent the cover image attribution in about.html if no or a custom cover is used

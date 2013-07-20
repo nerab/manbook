@@ -47,25 +47,38 @@ module ManBookTest
 
     def test_defaults
       assert_exec("#{app_script} #{output_dir}")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title
       title = "Foo42Bar"
       assert_exec("#{app_script} #{output_dir} --title \"#{title}\"")
-      test_all_workproducts(title, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(title, ManBook::AUTHOR_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+    end
+
+    def test_overridden_author
+      author = "James Born"
+      assert_exec("#{app_script} #{output_dir} --author \"#{author}\"")
+      test_all_workproducts(ManBook::TITLE_DEFAULT, author, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+    end
+    
+    def test_overridden_title_and_author
+      title = "Foo42Bar42"
+      author = "James F. Born"
+      assert_exec("#{app_script} #{output_dir} --title \"#{title}\" --author \"#{author}\"")
+      test_all_workproducts(title, author, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_no_cover_image
       assert_exec("#{app_script} #{output_dir} --no-cover-image")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, nil)
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, nil)
     end
 
     def test_alt_cover_image
       cover_image = ManBook::COVER_IMAGE_DEFAULT
       assert(File.exist?(cover_image))
       assert_exec("#{app_script} #{output_dir} --cover-image #{cover_image}")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, File.basename(cover_image))
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, File.basename(cover_image))
     end
 
     def test_alt_cover_image_not_found
@@ -75,7 +88,7 @@ module ManBookTest
     end
 
   private
-    def test_all_workproducts(title, cover_image = nil)
+    def test_all_workproducts(title, author, cover_image = nil)
       if cover_image.nil?
         workproducts = WORKPRODUCTS
       else
@@ -125,7 +138,7 @@ module ManBookTest
       "#{APP_SCRIPT}"
     end
 
-    def test_workproduct_html(title, cover_image = nil)
+    def test_workproduct_html(title, author, cover_image = nil)
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
       assert_workproduct(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
 
@@ -137,7 +150,7 @@ module ManBookTest
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
     end
 
-    def test_workproduct_ncx(title, cover_image = nil)
+    def test_workproduct_ncx(title, author, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
 
       fixtures = ['about.html'].concat(@fixtures)
@@ -154,7 +167,7 @@ module ManBookTest
       #   @playOrder="0"
     end
 
-    def test_workproduct_opf(title, cover_image = nil)
+    def test_workproduct_opf(title, author, cover_image = nil)
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
@@ -181,11 +194,11 @@ module ManBookTest
       end
     end
 
-    def test_workproduct_about(title, cover_image = nil)
+    def test_workproduct_about(title, author, cover_image = nil)
       # no further tests
     end
 
-    def test_workproduct_cover(title, cover_image = nil)
+    def test_workproduct_cover(title, author, cover_image = nil)
       # no further tests
     end
 
