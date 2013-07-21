@@ -39,8 +39,9 @@ module ManBookTest
 
     def setup
       super
-      FileUtils.cp_r(File.join(FIXTURES_DIR, '.'), output_dir)
-      @fixtures = Dir.glob(File.join(FIXTURES_DIR, '*.html')).map{|f| File.basename(f)}
+      fixtures = Dir.glob(File.join(FIXTURES_DIR, '*.html'))
+      FileUtils.cp_r(fixtures, output_dir)
+      @fixtures = fixtures.map{|f| File.basename(f)}
     end
 
     def test_no_args
@@ -97,7 +98,9 @@ module ManBookTest
         workproducts = WORKPRODUCTS.merge({:cover => cover_image})
       end
 
-      assert_equal(@fixtures.size + workproducts.size, Dir.glob(File.join(output_dir, '*')).size)
+      expected = @fixtures + workproducts.values
+      actual = Dir.glob(File.join(output_dir, '*')).map{|f| File.basename(f)}
+      assert_equal((expected - actual), (actual - expected))
 
       workproducts.each{|k,v|
         vf = File.join(output_dir, v)
