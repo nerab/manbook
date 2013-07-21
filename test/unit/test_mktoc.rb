@@ -106,7 +106,7 @@ module ManBookTest
         # dispatch to test that is specific to the work product
         wp_test = WORK_PRODUCT_TESTS[k]
         raise "No test defined for work product #{k}" if wp_test.nil?
-        send(wp_test, title, cover_image)
+        send(wp_test, title, author, cover_image)
       }
     end
 
