@@ -11,7 +11,7 @@ module ManBookTest
     #
     # command under test
     #
-    APP_SCRIPT = 'ruby bin/mktoc'
+    APP_SCRIPT = 'bin/mktoc'
 
     #
     # generator identification
@@ -34,6 +34,8 @@ module ManBookTest
                           :opf   => 'test_workproduct_opf',
                           :about => 'test_workproduct_about',
                           :cover => 'test_workproduct_cover'}
+
+    COVER_IMAGE_ALT = File.join(FIXTURES_DIR, 'alt-cover.jpg')
 
     def setup
       super
@@ -61,7 +63,7 @@ module ManBookTest
       assert_exec("#{app_script} #{output_dir} --author \"#{author}\"")
       test_all_workproducts(ManBook::TITLE_DEFAULT, author, File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
-    
+
     def test_overridden_title_and_author
       title = "Foo42Bar42"
       author = "James F. Born"
@@ -75,7 +77,7 @@ module ManBookTest
     end
 
     def test_alt_cover_image
-      cover_image = ManBook::COVER_IMAGE_DEFAULT
+      cover_image = COVER_IMAGE_ALT
       assert(File.exist?(cover_image))
       assert_exec("#{app_script} #{output_dir} --cover-image #{cover_image}")
       test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, File.basename(cover_image))
@@ -92,7 +94,7 @@ module ManBookTest
       if cover_image.nil?
         workproducts = WORKPRODUCTS
       else
-        workproducts = WORKPRODUCTS.merge({:cover => 'library_books.jpg'})
+        workproducts = WORKPRODUCTS.merge({:cover => cover_image})
       end
 
       assert_equal(@fixtures.size + workproducts.size, Dir.glob(File.join(output_dir, '*')).size)

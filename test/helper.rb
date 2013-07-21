@@ -1,7 +1,7 @@
-require 'rubygems'
 require 'bundler'
 require 'tmpdir'
 require 'fileutils'
+require 'active_support/core_ext/string'
 
 begin
   Bundler.setup(:default, :development)
@@ -26,11 +26,15 @@ module ManBookTest
     attr_reader :output_dir
 
     def setup
-      @output_dir = Dir.mktmpdir(File.join('test', 'tmp', 'unit-test'), '.')
+      @output_dir = Dir.mktmpdir(__name__)
     end
 
     def teardown
-      FileUtils.remove_entry_secure(@output_dir)
+      if passed?
+        FileUtils.remove_entry_secure(@output_dir)
+      else
+        STDERR.puts " => Check #{@output_dir} for workproducts"
+      end
     end
 
     # solves the problem of non-existing test cases

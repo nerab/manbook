@@ -15,7 +15,7 @@ require 'manbook/errors'
 require 'manbook/log_formatter'
 
 module ManBook
-  VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION]))
+  VERSION = File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION])).chomp
   TITLE_DEFAULT = "ManBook - a book of selected man pages"
   AUTHOR_DEFAULT = "Multiple Authors"
   COVER_IMAGE_DEFAULT = File.join(File.dirname(__FILE__), '..', 'templates', 'library_books.jpg')
