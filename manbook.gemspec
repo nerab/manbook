@@ -4,15 +4,15 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{manbook}
-  s.version = "0.0.1"
+  s.name = "manbook"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Nicholas E. Rabenau}]
-  s.date = %q{2011-12-02}
-  s.description = %q{The manbook command can be used to produce an eBook from one or more man pages.}
-  s.email = %q{nerab@gmx.net}
-  s.executables = [%q{mktoc}, %q{manbook}, %q{manbook}]
+  s.authors = ["Nicholas E. Rabenau"]
+  s.date = "2013-07-22"
+  s.description = "The manbook command can be used to produce an eBook from one or more man pages."
+  s.email = "nerab@gmx.net"
+  s.executables = ["manbook", "mktoc", "manbook"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md",
@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/manbook/html_formatter.rb",
     "lib/manbook/log_formatter.rb",
     "lib/manbook/parser.rb",
+    "manbook.gemspec",
     "templates/_page.html.erb",
     "templates/about.html.erb",
     "templates/application.html.erb",
@@ -42,6 +43,7 @@ Gem::Specification.new do |s|
     "templates/library_books.jpg",
     "templates/manbook.ncx.erb",
     "templates/manbook.opf.erb",
+    "test/fixtures/alt-cover.jpg",
     "test/fixtures/bash.html",
     "test/fixtures/cat.html",
     "test/fixtures/git.html",
@@ -53,37 +55,40 @@ Gem::Specification.new do |s|
     "test/unit/test_manbook.rb",
     "test/unit/test_mktoc.rb"
   ]
-  s.homepage = %q{http://github.com/nerab/manbook}
-  s.licenses = [%q{MIT}]
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.9}
-  s.summary = %q{Produces an eBook from man pages}
+  s.homepage = "http://github.com/nerab/manbook"
+  s.licenses = ["MIT"]
+  s.require_paths = ["lib"]
+  s.rubygems_version = "2.0.3"
+  s.summary = "Produces an eBook from man pages"
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
-      s.add_runtime_dependency(%q<open4>, [">= 0"])
-      s.add_runtime_dependency(%q<nokogiri>, [">= 0"])
-      s.add_development_dependency(%q<rake>, ["= 0.8.7"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
+      s.add_runtime_dependency(%q<activesupport>, ["~> 4.0"])
+      s.add_runtime_dependency(%q<open4>, ["~> 1.3"])
+      s.add_runtime_dependency(%q<nokogiri>, ["~> 1.5"])
+      s.add_development_dependency(%q<rake>, ["= 10.1"])
+      s.add_development_dependency(%q<pry>, [">= 0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.8"])
     else
-      s.add_dependency(%q<activesupport>, [">= 0"])
-      s.add_dependency(%q<open4>, [">= 0"])
-      s.add_dependency(%q<nokogiri>, [">= 0"])
-      s.add_dependency(%q<rake>, ["= 0.8.7"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
+      s.add_dependency(%q<activesupport>, ["~> 4.0"])
+      s.add_dependency(%q<open4>, ["~> 1.3"])
+      s.add_dependency(%q<nokogiri>, ["~> 1.5"])
+      s.add_dependency(%q<rake>, ["= 10.1"])
+      s.add_dependency(%q<pry>, [">= 0"])
+      s.add_dependency(%q<bundler>, ["~> 1.0"])
+      s.add_dependency(%q<jeweler>, ["~> 1.8"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 0"])
-    s.add_dependency(%q<open4>, [">= 0"])
-    s.add_dependency(%q<nokogiri>, [">= 0"])
-    s.add_dependency(%q<rake>, ["= 0.8.7"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
+    s.add_dependency(%q<activesupport>, ["~> 4.0"])
+    s.add_dependency(%q<open4>, ["~> 1.3"])
+    s.add_dependency(%q<nokogiri>, ["~> 1.5"])
+    s.add_dependency(%q<rake>, ["= 10.1"])
+    s.add_dependency(%q<pry>, [">= 0"])
+    s.add_dependency(%q<bundler>, ["~> 1.0"])
+    s.add_dependency(%q<jeweler>, ["~> 1.8"])
   end
 end
 
