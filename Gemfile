@@ -9,4 +9,6 @@ group :development do
   gem 'pry'
   gem 'bundler', '~> 1.0'
   gem 'jeweler', '~> 1.8'
+  gem 'guard-minitest'#, '~> 0.5'
+  gem 'guard-bundler' #, '~> 1.0'
 end
