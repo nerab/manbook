@@ -37,6 +37,8 @@ module ManBookTest
 
     COVER_IMAGE_ALT = File.join(FIXTURES_DIR, 'alt-cover.jpg')
 
+    SPECIAL_TITLE_FIXTURES = ['about.html', 'bash.html', 'git.html', 'gunzip.html', 'less.html', 'man.html']
+
     def setup
       super
       fixtures = Dir.glob(File.join(FIXTURES_DIR, '*.html'))
@@ -154,8 +156,7 @@ module ManBookTest
 
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
 
-      fixtures = ['about.html'].concat(@fixtures)
-      assert_workproduct(fixtures, doc, '/html/body/ul/li', 'a/@href')
+      assert_workproduct(@fixtures, doc, '/html/body/ul/li', 'a/@href')
 
       # index.html does not use the book title, but "Table Of Contents"
       assert_equal("Table Of Contents", doc.xpath('/html/head/title/text()').to_s)
@@ -164,10 +165,15 @@ module ManBookTest
       assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
 
-      # TODO title, href and order of members as they appear
-      # <li><a href="about.html">About this book</a></li>
-      assert_equal(fixtures, doc.xpath("/html/body/ul/li/a/@href").map{|a| a.value})
-      #assert_equal(titles(fixtures), doc.xpath("/html/body/ul/li").map{|n| a.to_s})
+      # Test href
+      assert_equal(@fixtures, doc.xpath("/html/body/ul/li/a/@href").map{|a| a.value})
+
+      # Test titles
+      fixture_titles.each_with_index do |fixture, i|
+        assert_equal(fixture.upcase, doc.xpath("/html/body/ul/li/text()")[i].to_s.upcase) unless SPECIAL_TITLE_FIXTURES.include?(@fixtures[i])
+      end
+
+      # TODO Test order of members as they appear
     end
 
     def test_workproduct_ncx(title, author, options)
@@ -175,9 +181,8 @@ module ManBookTest
 
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
 
-      fixtures = ['about.html'].concat(@fixtures)
-      fixtures << options[:cover_image] unless options[:cover_image].nil?
-      assert_workproduct(fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
+      @fixtures << options[:cover_image] unless options[:cover_image].nil?
+      assert_workproduct(@fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
 
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
@@ -194,14 +199,12 @@ module ManBookTest
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
-      item_fixtures = ['index.html', 'index.ncx', 'about.html'].concat(@fixtures)
-      item_fixtures << options[:cover_image] unless options[:cover_image].nil?
+      item_fixtures = ['index.html', 'index.ncx'].concat(@fixtures)
       assert_workproduct(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
 
-      # cross-references within the document
-      xref_fixtures = ['index', 'about.html'].concat(@fixtures)
+      # cross-references within the document, but only include *.html fixtures
+      xref_fixtures = ['index'].concat(@fixtures.select{|f| f.match(/.*\.html/)})
       xref_fixtures << 'cover-image' unless options[:cover_image].nil?
-
       assert_workproduct(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
 
       assert_equal(title, doc.xpath('/xmlns:package/xmlns:metadata/dc:title/text()',
@@ -258,8 +261,8 @@ module ManBookTest
       }
     end
 
-    def titles(fixtures)
-      fixtures.map do |fixture|
+    def fixture_titles
+      @fixtures.map do |fixture|
         Nokogiri::HTML(File.read(File.join(FIXTURES_DIR, fixture))).xpath('/html/body/h1/text()').to_s
       end
     end
