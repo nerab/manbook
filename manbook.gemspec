@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "manbook"
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nicholas E. Rabenau"]
-  s.date = "2013-07-22"
+  s.date = "2013-07-26"
   s.description = "The manbook command can be used to produce an eBook from one or more man pages."
   s.email = "nerab@gmx.net"
   s.executables = ["manbook", "mktoc", "manbook"]
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
     ".document",
     "Gemfile",
     "Gemfile.lock",
+    "Guardfile",
     "LICENSE.txt",
     "README.md",
     "Rakefile",
@@ -34,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/manbook/formatter.rb",
     "lib/manbook/html_formatter.rb",
     "lib/manbook/log_formatter.rb",
+    "lib/manbook/page.rb",
     "lib/manbook/parser.rb",
     "manbook.gemspec",
     "templates/_page.html.erb",
@@ -43,6 +45,7 @@ Gem::Specification.new do |s|
     "templates/library_books.jpg",
     "templates/manbook.ncx.erb",
     "templates/manbook.opf.erb",
+    "test/fixtures/about.html",
     "test/fixtures/alt-cover.jpg",
     "test/fixtures/bash.html",
     "test/fixtures/cat.html",
@@ -53,7 +56,8 @@ Gem::Specification.new do |s|
     "test/fixtures/man.html",
     "test/helper.rb",
     "test/unit/test_manbook.rb",
-    "test/unit/test_mktoc.rb"
+    "test/unit/test_mktoc.rb",
+    "test/unit/test_page.rb"
   ]
   s.homepage = "http://github.com/nerab/manbook"
   s.licenses = ["MIT"]
@@ -72,6 +76,8 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<pry>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8"])
+      s.add_development_dependency(%q<guard-minitest>, [">= 0"])
+      s.add_development_dependency(%q<guard-bundler>, [">= 0"])
     else
       s.add_dependency(%q<activesupport>, ["~> 4.0"])
       s.add_dependency(%q<open4>, ["~> 1.3"])
@@ -80,6 +86,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<pry>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8"])
+      s.add_dependency(%q<guard-minitest>, [">= 0"])
+      s.add_dependency(%q<guard-bundler>, [">= 0"])
     end
   else
     s.add_dependency(%q<activesupport>, ["~> 4.0"])
@@ -89,6 +97,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<pry>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8"])
+    s.add_dependency(%q<guard-minitest>, [">= 0"])
+    s.add_dependency(%q<guard-bundler>, [">= 0"])
   end
 end
 
