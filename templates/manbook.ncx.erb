@@ -13,9 +13,9 @@
   <navMap>
     <% i = 0 %>
     <% @pages.each_with_index{|page, i| %>
-      <navPoint id="<%= page[:file_name] %>" playOrder="<%= i + 1 %>">
-        <navLabel><text><%= page[:title] %></text></navLabel>
-        <content src="<%= page[:file_name] %>" />
+      <navPoint id="<%= page.file_name %>" playOrder="<%= i + 1 %>">
+        <navLabel><text><%= page.title %></text></navLabel>
+        <content src="<%= page.file_name %>" />
       </navPoint>
     <% } %>
 <% unless @cover_image.nil? %>

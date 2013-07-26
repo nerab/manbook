@@ -17,7 +17,7 @@
     <item id="index" href="index.html" media-type="text/html" />
     <item id="toc" href="index.ncx" media-type="application/x-dtbncx+xml"/>
     <% @pages.each{|page| %>
-    <item id="<%= page[:file_name] %>" href="<%= page[:file_name] %>" media-type="text/html" />
+    <item id="<%= page.file_name %>" href="<%= page.file_name %>" media-type="text/html" />
     <% } %>
   </manifest>
   <spine toc="toc">
@@ -26,7 +26,7 @@
 <% end %>
     <itemref idref="index" />
     <% @pages.each{|page| %>
-    <itemref idref="<%= page[:file_name] %>" />
+    <itemref idref="<%= page.file_name %>" />
     <% } %>
   </spine>
   <guide>

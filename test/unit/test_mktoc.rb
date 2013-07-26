@@ -89,11 +89,10 @@ module ManBookTest
       test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :order => :author)
     end
 
-# TODO Enable once Page is working
-    # def test_order_by_unknown_attribute
-    #   order = "DOES_NOT_EXIST"
-    #   assert_exec("#{app_script} #{output_dir} --no-cover-image --sort-by=#{order}", false, nil, /ERROR: #{order} is not a valid sort order attribute/)
-    # end
+    def test_order_by_unknown_attribute
+      order = "DOES_NOT_EXIST"
+      assert_exec("#{app_script} #{output_dir} --no-cover-image --sort-by=#{order}", false, nil, /ERROR: #{order} is not a valid sort order attribute/)
+    end
 
     def test_alt_cover_image
       cover_image = COVER_IMAGE_ALT
@@ -177,15 +176,15 @@ module ManBookTest
       assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
 
-      sorted_pages = pages.sort{|l,r| l[options[:order]] <=> r[options[:order]]}
+      sorted_pages = pages.sort{|l,r| l.send(options[:order]) <=> r.send(options[:order])}
 
       # Test href in content and in order
-      expected_files = sorted_pages.map{|p| p[:file_name]}
+      expected_files = sorted_pages.map{|p| p.file_name}
       actual_files   = doc.xpath('/html/body/ul/li/a/@href').map{|a| a.value}
       assert_equal(expected_files, actual_files)
 
       # Test titles in content and in order
-      expected_titles = sorted_pages.map{|p| p[:title].upcase}
+      expected_titles = sorted_pages.map{|p| p.title.upcase}
       actual_titles   = doc.xpath("/html/body/ul/li").map{|li| li.inner_text.upcase}
       assert_equal(expected_titles, actual_titles)
     end

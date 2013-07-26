@@ -10,6 +10,7 @@ require 'nokogiri'
 require 'manbook/formatter'
 require 'manbook/html_formatter'
 require 'manbook/parser'
+require 'manbook/page'
 
 require 'manbook/errors'
 require 'manbook/log_formatter'

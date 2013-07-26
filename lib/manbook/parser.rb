@@ -25,7 +25,11 @@ module ManBook
           author = doc.xpath("//h2[text() = 'AUTHORS']/following-sibling::p[1]/descendant-or-self::text()").to_s
         end
 
-        {:file_name => File.basename(html_file), :title => title.split("\n").join(' '), :author => author.split("\n").join(' ')}
+        Page.new.tap do |page|
+          page.file_name = File.basename(html_file)
+          page.title     = title.split("\n").join(' ')
+          page.author    = author.split("\n").join(' ')
+        end
       end
     end
   end

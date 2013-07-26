@@ -119,11 +119,14 @@ begin
   }
 
   # find pages
-  @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_HTML == File.basename(f)}.collect{|html_file|
-    ManBook::Parser.parse(html_file)
-  }.sort{|l,r| l[@order] <=> r[@order]}
-# TODO Send message instead of Hash access in order to catch unknown sort attributes
-#  }.sort{|l,r| l.send(@order) <=> r.send(@order)}
+  begin
+    @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_HTML == File.basename(f)}.collect{|html_file|
+      ManBook::Parser.parse(html_file)
+    }.sort{|l,r| l.send(@order) <=> r.send(@order)}
+  rescue NoMethodError
+    attributes = (ManBook::Page.new.public_methods - Object.public_methods).reject{|m| m.match(/=$/)}
+    raise "#{@order} is not a valid sort order attribute. Value values are #{attributes.join(', ')}."
+  end
 
   # index.html
   File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
