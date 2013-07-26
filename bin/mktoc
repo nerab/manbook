@@ -36,6 +36,7 @@ GENERATOR = "#{File.basename(__FILE__)} v#{ManBook::VERSION}"
 @book_title  = ManBook::TITLE_DEFAULT
 @cover_image = ManBook::COVER_IMAGE_DEFAULT
 @book_author = ManBook::AUTHOR_DEFAULT
+@order       = ManBook::ORDER_DEFAULT
 
 opts = OptionParser.new do |opts|
   opts.banner = help
@@ -74,6 +75,11 @@ opts = OptionParser.new do |opts|
 
   opts.on("--no-cover-image", "Do not reference a cover image") do
     @cover_image = nil
+  end
+
+  opts.on("--order ", "Speficy how order of chapters is determined") do |order|
+    ManBook.logger.info "Chapters will be ordered by #{order}"
+    @order = order
   end
 end
 

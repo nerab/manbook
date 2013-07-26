@@ -77,6 +77,12 @@ module ManBookTest
       test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, nil)
     end
 
+    def test_order_by_title
+      assert_exec("#{app_script} #{output_dir} --no-cover-image --order=title")
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, nil)
+
+    end
+
     def test_alt_cover_image
       cover_image = COVER_IMAGE_ALT
       assert(File.exist?(cover_image))
@@ -109,7 +115,7 @@ module ManBookTest
         # dispatch to test that is specific to the work product
         wp_test = WORK_PRODUCT_TESTS[k]
         raise "No test defined for work product #{k}" if wp_test.nil?
-        send(wp_test, title, author, cover_image)
+        send(wp_test, title, author, :cover_image => cover_image)
       }
     end
 
@@ -143,9 +149,13 @@ module ManBookTest
       "#{APP_SCRIPT}"
     end
 
-    def test_workproduct_html(title, author, cover_image = nil)
+    def test_workproduct_html(title, author, options)
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
+
       doc = Nokogiri::HTML(File.read(File.join(output_dir, 'index.html')))
-      assert_workproduct(['about.html'].concat(@fixtures), doc, '/html/body/ul/li', 'a/@href')
+
+      fixtures = ['about.html'].concat(@fixtures)
+      assert_workproduct(fixtures, doc, '/html/body/ul/li', 'a/@href')
 
       # index.html does not use the book title, but "Table Of Contents"
       assert_equal("Table Of Contents", doc.xpath('/html/head/title/text()').to_s)
@@ -153,36 +163,45 @@ module ManBookTest
 
       assert_equal(GENERATOR, doc.xpath("/html/head/meta[@name='generator']/@content").to_s)
       assert_equal("About this book", doc.xpath('/html/body/ul/li[1]/a/text()').to_s)
+
+      # TODO title, href and order of members as they appear
+      # <li><a href="about.html">About this book</a></li>
+      assert_equal(fixtures, doc.xpath("/html/body/ul/li/a/@href").map{|a| a.value})
+      #assert_equal(titles(fixtures), doc.xpath("/html/body/ul/li").map{|n| a.to_s})
     end
 
-    def test_workproduct_ncx(title, author, cover_image = nil)
+    def test_workproduct_ncx(title, author, options)
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
+
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.ncx')))
 
       fixtures = ['about.html'].concat(@fixtures)
-      fixtures << cover_image unless cover_image.nil?
+      fixtures << options[:cover_image] unless options[:cover_image].nil?
       assert_workproduct(fixtures, doc, '/xmlns:ncx/xmlns:navMap/xmlns:navPoint', 'xmlns:content/@src')
 
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:title']/@content").to_s)
       assert_equal(title, doc.xpath("/xmlns:ncx/xmlns:docTitle/xmlns:text/text()").to_s)
       assert_equal(GENERATOR, doc.xpath("/xmlns:ncx/xmlns:head/xmlns:meta[@name='dtb:generator']/@content").to_s)
 
-      # TODO id and order
+      # TODO id and order of members as specified in playOrder
       # navPoint
       #   @id="bash.html"
       #   @playOrder="0"
     end
 
-    def test_workproduct_opf(title, author, cover_image = nil)
+    def test_workproduct_opf(title, author, options)
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
       doc = Nokogiri::XML(File.read(File.join(output_dir, 'index.opf')))
 
       # the opf must include links to index.html and index.ncx
       item_fixtures = ['index.html', 'index.ncx', 'about.html'].concat(@fixtures)
-      item_fixtures << cover_image unless cover_image.nil?
+      item_fixtures << options[:cover_image] unless options[:cover_image].nil?
       assert_workproduct(item_fixtures, doc, '//xmlns:manifest/xmlns:item', '@href')
 
       # cross-references within the document
       xref_fixtures = ['index', 'about.html'].concat(@fixtures)
-      xref_fixtures << 'cover-image' unless cover_image.nil?
+      xref_fixtures << 'cover-image' unless options[:cover_image].nil?
+
       assert_workproduct(xref_fixtures, doc, '//xmlns:spine/xmlns:itemref', '@idref')
 
       assert_equal(title, doc.xpath('/xmlns:package/xmlns:metadata/dc:title/text()',
@@ -194,16 +213,25 @@ module ManBookTest
                                         'xmlns' => 'http://www.idpf.org/2007/opf'}).first.to_s)
 
       # reference to cover image in meta data. The other two references were already tested above
-      unless cover_image.nil?
+      unless options[:cover_image].nil?
         assert_equal('cover-image', doc.xpath("/xmlns:package/xmlns:metadata/xmlns:meta[@name='cover']/@content").to_s)
       end
+
+      # TODO id and href. Order does not matter.
+      # <item id="less.html" href="less.html" media-type="text/html" />
+
+      # TODO Assert than members present in the manifest are also present in the spine
     end
 
-    def test_workproduct_about(title, author, cover_image = nil)
+    def test_workproduct_about(title, author, options)
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
+
       # no further tests
     end
 
-    def test_workproduct_cover(title, author, cover_image = nil)
+    def test_workproduct_cover(title, author, options)
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
+
       # no further tests
     end
 
@@ -228,6 +256,12 @@ module ManBookTest
       hrefs.each{|li|
         assert(fixtures.include?(li), "Could not find '#{li}' in #{fixtures.inspect}")
       }
+    end
+
+    def titles(fixtures)
+      fixtures.map do |fixture|
+        Nokogiri::HTML(File.read(File.join(FIXTURES_DIR, fixture))).xpath('/html/body/h1/text()').to_s
+      end
     end
   end
 end
