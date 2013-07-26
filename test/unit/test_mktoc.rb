@@ -52,44 +52,43 @@ module ManBookTest
 
     def test_defaults
       assert_exec("#{app_script} #{output_dir}")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :cover_image => File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title
       title = "Foo42Bar"
       assert_exec("#{app_script} #{output_dir} --title \"#{title}\"")
-      test_all_workproducts(title, ManBook::AUTHOR_DEFAULT, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(title, ManBook::AUTHOR_DEFAULT, :cover_image => File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_author
       author = "James Born"
       assert_exec("#{app_script} #{output_dir} --author \"#{author}\"")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, author, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(ManBook::TITLE_DEFAULT, author, :cover_image => File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_overridden_title_and_author
       title = "Foo42Bar42"
       author = "James F. Born"
       assert_exec("#{app_script} #{output_dir} --title \"#{title}\" --author \"#{author}\"")
-      test_all_workproducts(title, author, File.basename(ManBook::COVER_IMAGE_DEFAULT))
+      test_all_workproducts(title, author, :cover_image => File.basename(ManBook::COVER_IMAGE_DEFAULT))
     end
 
     def test_no_cover_image
       assert_exec("#{app_script} #{output_dir} --no-cover-image")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, nil)
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT)
     end
 
     def test_order_by_title
       assert_exec("#{app_script} #{output_dir} --no-cover-image --order=title")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, nil)
-
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :order => :title)
     end
 
     def test_alt_cover_image
       cover_image = COVER_IMAGE_ALT
       assert(File.exist?(cover_image))
       assert_exec("#{app_script} #{output_dir} --cover-image #{cover_image}")
-      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, File.basename(cover_image))
+      test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :cover_image => File.basename(cover_image))
     end
 
     def test_alt_cover_image_not_found
@@ -99,11 +98,13 @@ module ManBookTest
     end
 
   private
-    def test_all_workproducts(title, author, cover_image = nil)
-      if cover_image.nil?
+    def test_all_workproducts(title, author, options = {})
+      options.reverse_merge!({:cover_image => nil, :order => ManBook::ORDER_DEFAULT})
+
+      if options[:cover_image].nil?
         workproducts = WORKPRODUCTS
       else
-        workproducts = WORKPRODUCTS.merge({:cover => cover_image})
+        workproducts = WORKPRODUCTS.merge({:cover => options[:cover_image]})
       end
 
       expected = @fixtures + workproducts.values
@@ -117,7 +118,7 @@ module ManBookTest
         # dispatch to test that is specific to the work product
         wp_test = WORK_PRODUCT_TESTS[k]
         raise "No test defined for work product #{k}" if wp_test.nil?
-        send(wp_test, title, author, :cover_image => cover_image)
+        send(wp_test, title, author, options)
       }
     end
 
@@ -168,10 +169,10 @@ module ManBookTest
       # Test href
       assert_equal(@fixtures, doc.xpath("/html/body/ul/li/a/@href").map{|a| a.value})
 
-      # Test titles
-      fixture_titles.each_with_index do |fixture, i|
-        assert_equal(fixture.upcase, doc.xpath("/html/body/ul/li/text()")[i].to_s.upcase) unless SPECIAL_TITLE_FIXTURES.include?(@fixtures[i])
-      end
+      # Test titles in order
+      expected_titles = pages.sort{|l,r| l[options[:order]] <=> r[options[:order]]}.map{|p| p[:title].upcase}
+      actual_titles   = doc.xpath("/html/body/ul/li").map{|li| li.inner_text.upcase}
+      assert_equal(expected_titles, actual_titles)
 
       # TODO Test order of members as they appear
     end
@@ -261,9 +262,9 @@ module ManBookTest
       }
     end
 
-    def fixture_titles
+    def pages
       @fixtures.map do |fixture|
-        Nokogiri::HTML(File.read(File.join(FIXTURES_DIR, fixture))).xpath('/html/body/h1/text()').to_s
+        ManBook::Parser.parse(File.join(FIXTURES_DIR, fixture))
       end
     end
   end
