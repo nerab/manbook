@@ -80,14 +80,20 @@ module ManBookTest
     end
 
     def test_order_by_title
-      assert_exec("#{app_script} #{output_dir} --no-cover-image --order=title")
+      assert_exec("#{app_script} #{output_dir} --no-cover-image --sort-by=title")
       test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :order => :title)
     end
 
     def test_order_by_author
-      assert_exec("#{app_script} #{output_dir} --no-cover-image --order=author")
+      assert_exec("#{app_script} #{output_dir} --no-cover-image --sort-by=author")
       test_all_workproducts(ManBook::TITLE_DEFAULT, ManBook::AUTHOR_DEFAULT, :order => :author)
     end
+
+# TODO Enable once Page is working
+    # def test_order_by_unknown_attribute
+    #   order = "DOES_NOT_EXIST"
+    #   assert_exec("#{app_script} #{output_dir} --no-cover-image --sort-by=#{order}", false, nil, /ERROR: #{order} is not a valid sort order attribute/)
+    # end
 
     def test_alt_cover_image
       cover_image = COVER_IMAGE_ALT
