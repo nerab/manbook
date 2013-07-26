@@ -79,7 +79,7 @@ opts = OptionParser.new do |opts|
 
   opts.on("--order ", "Speficy how order of chapters is determined") do |order|
     ManBook.logger.info "Chapters will be ordered by #{order}"
-    @order = order
+    @order = order.to_sym
   end
 end
 
@@ -121,7 +121,7 @@ begin
   # find pages
   @pages = Dir.glob(File.join(src_dir, "*.html")).reject{|f| INDEX_HTML == File.basename(f)}.collect{|html_file|
     ManBook::Parser.parse(html_file)
-  }.sort{|l,r| l[:title] <=> r[:title]}
+  }.sort{|l,r| l[@order] <=> r[@order]}
 
   # index.html
   File.open(File.join(src_dir, INDEX_HTML), 'w') {|f|
