@@ -1,6 +1,8 @@
 manbook --  produces an eBook from man pages
 ============================================
 
+[![Build Status](https://travis-ci.org/nerab/manbook.svg?branch=master)](https://travis-ci.org/nerab/manbook)
+
 ## SYNOPSIS
 
     manbook <MANPAGE>
@@ -14,7 +16,7 @@ manbook --  produces an eBook from man pages
 ## DESCRIPTION
 
 The `manbook` command can be used to produce an eBook from one or more
-man pages. 
+man pages.
 
 `mktoc` produces table-of-content files, suitable for MOBI files (Kindle,
 etc) from the HTML files in a directory.
@@ -31,13 +33,13 @@ etc) from the HTML files in a directory.
 use the MANPATH environment variable to find the man page and convert it to
 HTML.
 
-If more than one man page was passed, an additional index page will be 
-created. If the man pages are from different sections, `manbook` will create 
+If more than one man page was passed, an additional index page will be
+created. If the man pages are from different sections, `manbook` will create
 separate indexes by section together with an index file for each section.
 
 ## OPTIONS
 
-You can specify an individual man page or a list of man pages using a few 
+You can specify an individual man page or a list of man pages using a few
 options.
 
   * `-o`, `--output`:
@@ -84,14 +86,14 @@ and a few other, not-quite-complete scripts. None of them satisfied my requireme
 
 ## BUGS
 
-Requires the `groff` script to be in your path and executable. 
+Requires the `groff` script to be in your path and executable.
 
 Requires Ruby and RubyGems.
 
 Please report other bugs at <http://github.com/nerab/manbook/issues>
 
 ## CONTRIBUTING
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
