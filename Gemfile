@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem 'activesupport', '~> 4.0'
+gem 'activesupport', '~> 5.1'
 gem 'open4', '~> 1.3'
 gem 'nokogiri', '~> 1.5'
 
