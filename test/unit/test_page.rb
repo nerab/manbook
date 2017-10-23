@@ -1,7 +1,7 @@
-require 'helper'
+require_relative '../helper'
 
 module ManBookTest
-  class TestPage < ManBookTest::TestCase
+  class TestPage < MiniTest::Test
     def test_about
       file_name = 'about.html'
       page = ManBook::Parser.parse(fixture(file_name))

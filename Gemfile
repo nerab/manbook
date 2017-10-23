@@ -1,14 +1,14 @@
 source "http://rubygems.org"
 
-gem 'activesupport', '~> 4.0'
-gem 'open4', '~> 1.3'
-gem 'nokogiri', '~> 1.5'
+gem 'activesupport'
+gem 'open4'
+gem 'nokogiri'
 
 group :development do
-  gem 'rake', '10.1'
+  gem 'rake'
   gem 'pry'
-  gem 'bundler', '~> 1.0'
-  gem 'jeweler', '~> 1.8'
-  gem 'guard-minitest'#, '~> 0.5'
-  gem 'guard-bundler' #, '~> 1.0'
+  gem 'bundler'
+  gem 'jeweler'
+  gem 'guard-minitest'
+  gem 'guard-bundler'
 end

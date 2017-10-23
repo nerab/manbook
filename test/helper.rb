@@ -1,6 +1,7 @@
 require 'bundler'
 require 'tmpdir'
 require 'fileutils'
+require 'minitest/autorun'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash/reverse_merge'
 
@@ -12,25 +13,28 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
-require 'test/unit'
-
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
 require 'manbook'
 
-class Test::Unit::TestCase
-  FIXTURES_DIR = File.join(File.dirname(__FILE__), 'fixtures')
-end
-
 module ManBookTest
-  class TestCase < Test::Unit::TestCase
+  FIXTURES_DIR = File.join(File.dirname(__FILE__), 'fixtures')
+
+  class TestCase < MiniTest::Test
     attr_reader :output_dir
 
+    def initialize(*args)
+      super(*args)
+    end
+
     def setup
-      @output_dir = Dir.mktmpdir(__name__)
+      super
+      @output_dir = Dir.mktmpdir(name)
     end
 
     def teardown
+      super
       if passed?
         FileUtils.remove_entry_secure(@output_dir)
       else

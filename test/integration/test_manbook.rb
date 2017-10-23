@@ -12,7 +12,7 @@ module ManBookTest
         assert_match(/ERROR: Which man page do you want to convert?/, stderr.read)
         assert(stdout.read.empty?)
       }
-      assert_not_equal(0, status.exitstatus)
+      refute_equal(0, status.exitstatus)
     end
 
     def test_existing_page_single
@@ -36,7 +36,7 @@ module ManBookTest
         assert_match(/ERROR: No manual entry for foobar/, stderr.read)
         assert(stdout.read.empty?)
       }
-      assert_not_equal(0, status.exitstatus)
+      refute_equal(0, status.exitstatus)
     end
 
     def test_existing_and_nonexisting_pages
@@ -44,7 +44,7 @@ module ManBookTest
         assert_match(/ERROR: No manual entry for deadbeef/, stderr.read)
         assert(stdout.read.empty?)
       }
-      assert_not_equal(0, status.exitstatus)
+      refute_equal(0, status.exitstatus)
     end
 
     def test_nonexisting_page_multiple
@@ -57,7 +57,7 @@ module ManBookTest
         assert_equal(0, catched_messages)
         assert(stdout.read.empty?)
       }
-      assert_not_equal(0, status.exitstatus)
+      refute_equal(0, status.exitstatus)
     end
 
   private
