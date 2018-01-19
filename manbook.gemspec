@@ -75,7 +75,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rake>, "= 12.3.0")
       s.add_development_dependency(%q<pry>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8"])
+      s.add_development_dependency(%q<jeweler>, "~> 2.3")
       s.add_development_dependency(%q<guard-minitest>, [">= 0"])
       s.add_development_dependency(%q<guard-bundler>, [">= 0"])
     else
@@ -85,7 +85,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rake>, "= 12.3.0")
       s.add_dependency(%q<pry>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8"])
+      s.add_dependency(%q<jeweler>, "~> 2.3")
       s.add_dependency(%q<guard-minitest>, [">= 0"])
       s.add_dependency(%q<guard-bundler>, [">= 0"])
     end
@@ -96,7 +96,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rake>, "= 12.3.0")
     s.add_dependency(%q<pry>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8"])
+    s.add_dependency(%q<jeweler>, "~> 2.3")
     s.add_dependency(%q<guard-minitest>, [">= 0"])
     s.add_dependency(%q<guard-bundler>, [">= 0"])
   end
