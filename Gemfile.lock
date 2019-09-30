@@ -87,7 +87,7 @@ GEM
       method_source (~> 0.9.0)
     psych (3.0.2)
     rack (2.0.6)
-    rake (12.3.3)
+    rake (13.0.0)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
