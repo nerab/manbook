@@ -7,7 +7,7 @@ gem 'nokogiri'
 group :development do
   gem 'rake'
   gem 'pry'
-  gem 'bundler'
+  gem 'bundler', '>= 2.2.10'
   gem 'jeweler'
   gem 'guard-minitest'
   gem 'guard-bundler'
