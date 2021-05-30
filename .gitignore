@@ -7,11 +7,12 @@
 #.redcar
 #\#*
 #tmtags
+.DS_Store
 .bundle
 .cache_rake_t
+.rake_tasks
 .yardoc
 coverage
 doc
-.DS_Store
 pkg
 rdoc
