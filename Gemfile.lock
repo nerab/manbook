@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (6.1.4)
+    activesupport (6.1.4.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -45,7 +45,7 @@ GEM
       minitest (>= 3.0)
     hashie (4.1.0)
     highline (2.0.3)
-    i18n (1.8.10)
+    i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     jeweler (2.3.9)
       builder
@@ -102,7 +102,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   x86_64-darwin-18
