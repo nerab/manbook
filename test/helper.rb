@@ -2,8 +2,7 @@ require 'bundler'
 require 'tmpdir'
 require 'fileutils'
 require 'minitest/autorun'
-require 'active_support/core_ext/string'
-require 'active_support/core_ext/hash/reverse_merge'
+require 'active_support'
 
 begin
   Bundler.setup(:default, :development)
